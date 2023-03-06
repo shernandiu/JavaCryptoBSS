@@ -135,6 +135,12 @@ public class gui {
 	}
 
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		JFrame jf = new JFrame("APP");
 		jf.setContentPane(new gui().panel1);
 		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
