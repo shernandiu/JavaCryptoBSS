@@ -41,7 +41,7 @@ public class gui {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser();
-				jfc.addChoosableFileFilter(new FileNameExtensionFilter("Ficheros encriptados (.cif)", "cif"));
+				jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros encriptados (.%s)", Cipher_File.ENCRYPTED_EXTENSION), Cipher_File.ENCRYPTED_EXTENSION));
 				int returnVal = jfc.showOpenDialog(jfc);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					file_route.setText(jfc.getSelectedFile().getPath());

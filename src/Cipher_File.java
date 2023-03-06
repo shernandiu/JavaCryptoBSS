@@ -5,6 +5,9 @@ import java.security.spec.InvalidKeySpecException;
 
 public class Cipher_File extends Cipher_msg {
 
+	public static final String ENCRYPTED_EXTENSION = "cif";
+	public static final String DECRYPTED_EXTENSION = "uncif";
+
 	private final File file;
 
 	public Cipher_File(File file, Algoritmo cypher_type, char[] password) throws FileNotFoundException {
@@ -14,7 +17,7 @@ public class Cipher_File extends Cipher_msg {
 
 	@Override
 	void cipher() throws IOException {
-		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat(".cif"));
+		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
 		super.cipher();
@@ -22,7 +25,7 @@ public class Cipher_File extends Cipher_msg {
 
 	@Override
 	void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
-		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat(".uncif"));
+		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
 		super.decipher();
