@@ -118,7 +118,7 @@ public class gui extends JFrame {
 			}
 			logTextArea.setText("Seleccionado: " + comboBox1.getSelectedItem() + "\n Fichero: " + file_route.getText());
 
-			Write_Password ps = new Write_Password();
+			Write_Password ps = new Write_Password(gui.this);
 			System.out.println(ps.getPassword());
 
 

@@ -12,7 +12,11 @@ public class Write_Password extends JDialog {
 	private JPanel mainPanel;
 	private char[] password;
 
-	public Write_Password() {
+	public Write_Password(Frame owner) {
+		super(owner);
+
+		setLocationRelativeTo(owner);
+
 		System.out.println(getOwner());
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -28,7 +32,7 @@ public class Write_Password extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (passwordField1.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(null, "No se ha introducido ninguna contraseña");
+					JOptionPane.showMessageDialog(Write_Password.this, "No se ha introducido ninguna contraseña");
 					return;
 				}
 				password = passwordField1.getPassword();
@@ -46,6 +50,6 @@ public class Write_Password extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new Write_Password();
+		new Write_Password(null);
 	}
 }

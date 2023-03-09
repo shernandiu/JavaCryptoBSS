@@ -9,12 +9,12 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class password_screen {
+public class password_screen extends JDialog {
 	private static final double LOWER_POINTS = 10;
 	private static final double UPPER_POINTS = 15;
 	private static final double NUMBER_POINTS = 15;
 	private static final double PUNCT_POINTS = 20;
-	private final JDialog jd;
+
 	private JPasswordField passwordField1;
 	private JButton okButton;
 	private JButton cancelarButton;
@@ -24,19 +24,18 @@ public class password_screen {
 	private char[] password = null;
 
 	public password_screen(Frame owner) {
-		jd = new JDialog(owner);
-		jd.setLocationRelativeTo(owner);
-		jd.setContentPane(mainPanel);
-		jd.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(owner);
+		setContentPane(mainPanel);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		cancelarButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				jd.dispose();
+				dispose();
 			}
 		});
 
 
-		jd.pack();
+		pack();
 
 //		passwordField1.addKeyListener(new KeyAdapter() {
 //			@Override
@@ -56,19 +55,19 @@ public class password_screen {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (passwordField1.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(jd, "No se ha introducido ninguna contraseña");
+					JOptionPane.showMessageDialog(password_screen.this, "No se ha introducido ninguna contraseña");
 					return;
 				}
 				if (!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
-					JOptionPane.showMessageDialog(jd, "Las contraseñas no coinciden");
+					JOptionPane.showMessageDialog(password_screen.this, "Las contraseñas no coinciden");
 					return;
 				}
 				password = passwordField1.getPassword();
-				jd.dispose();
+				dispose();
 			}
 		});
-		jd.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-		jd.setVisible(true);
+		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+		setVisible(true);
 	}
 
 	public static void main(String[] args) {
