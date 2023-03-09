@@ -1,3 +1,5 @@
+package gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,8 +23,9 @@ public class password_screen {
 	private JProgressBar progressBar1;
 	private char[] password = null;
 
-	public password_screen() {
-		jd = new JDialog();
+	public password_screen(Frame owner) {
+		jd = new JDialog(owner);
+		jd.setLocationRelativeTo(owner);
 		jd.setContentPane(mainPanel);
 		jd.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		cancelarButton.addActionListener(new ActionListener() {
@@ -69,7 +72,7 @@ public class password_screen {
 	}
 
 	public static void main(String[] args) {
-		new password_screen();
+		new password_screen(null);
 	}
 
 	private void check_strength() {

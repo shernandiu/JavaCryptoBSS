@@ -1,3 +1,5 @@
+package util;
+
 import javax.crypto.*;
 import java.io.*;
 import java.security.*;
@@ -16,7 +18,7 @@ public class Cipher_File extends Cipher_msg {
 	}
 
 	@Override
-	void cipher() throws IOException {
+	public void cipher() throws IOException {
 		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
@@ -24,7 +26,7 @@ public class Cipher_File extends Cipher_msg {
 	}
 
 	@Override
-	void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
+	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
 		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
@@ -32,7 +34,7 @@ public class Cipher_File extends Cipher_msg {
 	}
 
 	public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException {
-//		Cypher c = new Cypher(new File("test"), Algoritmo.PBEDM53DES.getAlgorithm(), "aaaa");
+//		Cypher c = new Cypher(new File("test"), util.Algoritmo.PBEDM53DES.getAlgorithm(), "aaaa");
 //		c.generate_cypher();
 //		System.out.println(c.salt);
 //		c.read();

@@ -1,3 +1,7 @@
+package gui;
+
+import util.Cipher_msg;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -6,6 +10,8 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.util.Base64;
+
+import util.Algoritmo;
 
 public class Decipher_Msg_Window extends JDialog {
 	private JPanel mainPanel;

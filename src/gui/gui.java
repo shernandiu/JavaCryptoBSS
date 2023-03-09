@@ -1,15 +1,18 @@
+package gui;
+
+import util.Algoritmo;
+import util.Cipher_File;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class gui {
+public class gui extends JFrame {
 	private JPanel panel1;
 	private JComboBox<Algoritmo> comboBox1;
 	private JButton cifrarButton;
@@ -25,6 +28,14 @@ public class gui {
 	private char[] password = null;
 
 	public gui() {
+		setMinimumSize(new Dimension(600, -1));
+		setTitle("Cifrador");
+		setContentPane(panel1);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		pack();
+
+		setVisible(true);
+
 		for (Algoritmo a : Algoritmo.getListOfAlgorithms())
 			comboBox1.addItem(a);
 
@@ -37,19 +48,16 @@ public class gui {
 
 			}
 		});
-		abrirButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser jfc = new JFileChooser();
-				jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros encriptados (.%s)", Cipher_File.ENCRYPTED_EXTENSION), Cipher_File.ENCRYPTED_EXTENSION));
-				int returnVal = jfc.showOpenDialog(jfc);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					file_route.setText(jfc.getSelectedFile().getPath());
-					System.out.println(jfc.getSelectedFile());
-					file = jfc.getSelectedFile();
-				} else
-					logTextArea.setText("No se ha seleccionado archivo");
-			}
+		abrirButton.addActionListener(e -> {
+			JFileChooser jfc = new JFileChooser();
+			jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros encriptados (.%s)", Cipher_File.ENCRYPTED_EXTENSION), Cipher_File.ENCRYPTED_EXTENSION));
+			int returnVal = jfc.showOpenDialog(jfc);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				file_route.setText(jfc.getSelectedFile().getPath());
+				System.out.println(jfc.getSelectedFile());
+				file = jfc.getSelectedFile();
+			} else
+				logTextArea.setText("No se ha seleccionado archivo");
 		});
 		cifrarButton.addActionListener(e -> {
 			if (file == null) {
@@ -58,7 +66,7 @@ public class gui {
 			}
 			logTextArea.setText("Seleccionado: " + comboBox1.getSelectedItem() + "\n Fichero: " + file_route.getText());
 
-			password_screen ps = new password_screen();
+			password_screen ps = new password_screen(this);
 
 			if (ps.getPassword() != null) {
 				password = ps.getPassword();
@@ -98,8 +106,8 @@ public class gui {
 			}
 		});
 		comboBox1.addActionListener(e -> {
-			algoritmo = (Algoritmo) comboBox1.getSelectedItem();
-			logTextArea.setText("Algoritmo seleccionado: " + algoritmo);
+			algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
+			logTextArea.setText("util.Algoritmo seleccionado: " + algoritmo);
 		});
 		descifrarButton.addActionListener(e -> {
 			if (file == null) {
@@ -140,13 +148,8 @@ public class gui {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		new gui();
 
-		JFrame jf = new JFrame("APP");
-		jf.setContentPane(new gui().panel1);
-		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		jf.pack();
-
-		jf.setVisible(true);
 	}
 
 

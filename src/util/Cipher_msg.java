@@ -1,3 +1,5 @@
+package util;
+
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
@@ -47,7 +49,7 @@ public class Cipher_msg {
 		c = Cipher.getInstance(cypher_type.getAlgorithm());
 	}
 
-	void cipher() throws IOException {
+	public void cipher() throws IOException {
 		try {
 			generate_cypher(Cipher.ENCRYPT_MODE);
 
@@ -73,7 +75,7 @@ public class Cipher_msg {
 	}
 
 	//TODO: ARREGLAR CUANDO NO DETECTA EL ENCRIPTADO
-	void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
+	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
 		try {
 			generate_cypher(Cipher.DECRYPT_MODE);
 
@@ -116,12 +118,12 @@ public class Cipher_msg {
 		cypher_type = header.getAlgor();
 	}
 
-	String getText() {
+	public String getText() {
 		ByteArrayOutputStream os1 = (ByteArrayOutputStream) os;
 		return os1.toString();
 	}
 
-	String getTextBase64() {
+	public String getTextBase64() {
 		return Base64.getEncoder().encodeToString(((ByteArrayOutputStream) os).toByteArray());
 	}
 }

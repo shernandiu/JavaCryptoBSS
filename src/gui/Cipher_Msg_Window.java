@@ -1,12 +1,13 @@
+package gui;
+
+import util.Algoritmo;
+import util.Cipher_msg;
+
 import javax.swing.*;
-import javax.xml.transform.Source;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Base64;
 
 public class Cipher_Msg_Window extends JDialog {
 	private JTextField textField1;

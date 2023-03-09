@@ -1,4 +1,4 @@
-import javax.crypto.SecretKeyFactory;
+package util;
 
 public enum Algoritmo {
 	PBEMD5DES("PBEWithMD5AndDES", "PBE con MD5 y DES"),
@@ -26,7 +26,7 @@ public enum Algoritmo {
 
 	}
 
-	public static Algoritmo[] getListOfAlgorithms(){
+	public static Algoritmo[] getListOfAlgorithms() {
 		return Algoritmo.values();
 	}
 
