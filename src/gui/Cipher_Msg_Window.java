@@ -17,7 +17,13 @@ public class Cipher_Msg_Window extends JDialog {
 	private JPasswordField passwordField1;
 	private JPasswordField passwordField2;
 
-	public Cipher_Msg_Window() {
+	private Algoritmo algoritmo;
+
+	public Cipher_Msg_Window(Frame f, Algoritmo algoritmo) {
+		super(f);
+		this.algoritmo = algoritmo;
+		setLocationRelativeTo(f);
+
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
@@ -25,7 +31,7 @@ public class Cipher_Msg_Window extends JDialog {
 		encriptarButton.addActionListener(e -> {
 			try {
 				System.out.println("presionado");
-				Cipher_msg cm = new Cipher_msg(Algoritmo.PBEDM53DES, passwordField1.getPassword(), new ByteArrayInputStream(textField1.getText().getBytes()));
+				Cipher_msg cm = new Cipher_msg(algoritmo, passwordField1.getPassword(), new ByteArrayInputStream(textField1.getText().getBytes()));
 				cm.cipher();
 				System.out.println(cm.getText());
 				textField2.setText(cm.getTextBase64());
@@ -40,6 +46,6 @@ public class Cipher_Msg_Window extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new Cipher_Msg_Window();
+		new Cipher_Msg_Window(null, Algoritmo.PBEDM53DES);
 	}
 }

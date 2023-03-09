@@ -21,7 +21,9 @@ public class Decipher_Msg_Window extends JDialog {
 	private JTextField textField2;
 
 
-	public Decipher_Msg_Window() {
+	public Decipher_Msg_Window(Frame f) {
+		super(f);
+		setLocationRelativeTo(f);
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
@@ -51,6 +53,6 @@ public class Decipher_Msg_Window extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new Decipher_Msg_Window();
+		new Decipher_Msg_Window(null);
 	}
 }

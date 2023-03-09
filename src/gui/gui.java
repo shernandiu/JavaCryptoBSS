@@ -6,6 +6,8 @@ import util.Cipher_File;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -139,6 +141,19 @@ public class gui extends JFrame {
 			}
 
 
+		});
+		cifrarMensajeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Cipher_Msg_Window(gui.this, algoritmo);
+			}
+		});
+
+		descifrarMensajeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Decipher_Msg_Window(gui.this);
+			}
 		});
 	}
 
