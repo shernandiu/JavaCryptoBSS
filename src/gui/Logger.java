@@ -5,10 +5,10 @@ import javax.swing.text.*;
 import java.awt.*;
 
 class Logger {
-	private static JTextPane log = null;
-	private static Document doc = null;
 	private static final AttributeSet error_AS = new SimpleAttributeSet();
 	private static final AttributeSet text_AS = new SimpleAttributeSet();
+	private static JTextPane log = null;
+	private static Document doc = null;
 
 	static {
 		StyleConstants.setForeground((MutableAttributeSet) text_AS, Color.BLACK);

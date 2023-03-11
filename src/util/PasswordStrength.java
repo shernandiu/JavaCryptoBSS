@@ -17,7 +17,7 @@ public class PasswordStrength {
 		String password = new String(password_array);
 
 		int size = password_array.length;
-		
+
 		int number_upper = (int) upper.matcher(password).results().count();
 		int number_lower = (int) lower.matcher(password).results().count();
 		int number_number = (int) number.matcher(password).results().count();

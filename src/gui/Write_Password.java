@@ -2,8 +2,6 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Write_Password extends JDialog {
 	private JPasswordField passwordField1;
@@ -16,7 +14,7 @@ public class Write_Password extends JDialog {
 		super(owner);
 
 		setLocationRelativeTo(owner);
-		
+
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
@@ -35,11 +33,11 @@ public class Write_Password extends JDialog {
 		setVisible(true);
 	}
 
-	public char[] getPassword() {
-		return password;
-	}
-
 	public static void main(String[] args) {
 		new Write_Password(null);
+	}
+
+	public char[] getPassword() {
+		return password;
 	}
 }

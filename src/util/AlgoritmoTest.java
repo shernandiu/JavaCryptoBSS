@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.crypto.Cipher;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class AlgoritmoTest {
 

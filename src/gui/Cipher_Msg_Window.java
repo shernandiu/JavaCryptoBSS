@@ -1,22 +1,20 @@
 package gui;
 
-import exceptions.HeaderError;
 import util.Algoritmo;
 import util.Cipher_msg;
 
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -114,13 +112,13 @@ public class Cipher_Msg_Window extends JDialog {
 		setVisible(true);
 	}
 
+	public static void main(String[] args) {
+		new Cipher_Msg_Window(null, Algoritmo.PBEDM53DES);
+	}
+
 	private void resize_window() {
 		revalidate();
 		pack();
 		repaint();
-	}
-
-	public static void main(String[] args) {
-		new Cipher_Msg_Window(null, Algoritmo.PBEDM53DES);
 	}
 }

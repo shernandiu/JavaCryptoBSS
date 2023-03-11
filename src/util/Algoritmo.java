@@ -8,15 +8,6 @@ public enum Algoritmo {
 
 	;
 
-	public String getAlgorithm() {
-		return algorithm;
-	}
-
-	@Override
-	public String toString() {
-		return name;
-	}
-
 	private final String algorithm;
 	private final String name;
 
@@ -28,6 +19,15 @@ public enum Algoritmo {
 
 	public static Algoritmo[] getListOfAlgorithms() {
 		return Algoritmo.values();
+	}
+
+	public String getAlgorithm() {
+		return algorithm;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }

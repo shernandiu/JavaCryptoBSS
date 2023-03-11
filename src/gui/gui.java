@@ -5,11 +5,9 @@ import exceptions.PasswError;
 import util.Algoritmo;
 import util.Cipher_File;
 
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,12 +15,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class gui extends JFrame {
+	private final ActionListener decipher_msg_button = e -> new Decipher_Msg_Window(gui.this);
 	private JPanel panel1;
 	private JComboBox<Algoritmo> comboBox1;
 	private JButton cifrarButton;
@@ -32,12 +28,7 @@ public class gui extends JFrame {
 	private JTextField file_route;
 	private JButton abrirButton;
 	private JTextPane Log;
-
 	private File file = null;
-	private Algoritmo algoritmo = Algoritmo.getListOfAlgorithms()[0];
-	private char[] password = null;
-
-
 	private final ActionListener open_file = e -> {
 		JFileChooser jfc = new JFileChooser();
 		jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros encriptados (.%s)", Cipher_File.ENCRYPTED_EXTENSION), Cipher_File.ENCRYPTED_EXTENSION));
@@ -49,7 +40,22 @@ public class gui extends JFrame {
 		} else if (file == null)
 			Logger.add_error("No se ha seleccionado archivo");
 	};
-
+	private final ActionListener file_route_area = e -> {
+		file = new File(file_route.getText());
+		if (!file.isFile()) {
+			Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
+			file = null;
+		} else {
+			Logger.add_text("Fichero seleccionado: " + file_route.getText());
+		}
+	};
+	private Algoritmo algoritmo = Algoritmo.getListOfAlgorithms()[0];
+	private final ActionListener cipher_selection = e -> {
+		algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
+		Logger.add_text("Algoritmo seleccionado: " + algoritmo);
+	};
+	private final ActionListener cipher_msg_button = e -> new Cipher_Msg_Window(gui.this, algoritmo);
+	private char[] password = null;
 	private final ActionListener cipher_button = e -> {
 		if (file == null) {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
@@ -79,22 +85,6 @@ public class gui extends JFrame {
 			file = null;
 		}
 	};
-
-	private final ActionListener file_route_area = e -> {
-		file = new File(file_route.getText());
-		if (!file.isFile()) {
-			Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
-			file = null;
-		} else {
-			Logger.add_text("Fichero seleccionado: " + file_route.getText());
-		}
-	};
-
-	private final ActionListener cipher_selection = e -> {
-		algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
-		Logger.add_text("Algoritmo seleccionado: " + algoritmo);
-	};
-
 	private final ActionListener decipher_button = e -> {
 		if (file == null) {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
@@ -129,10 +119,6 @@ public class gui extends JFrame {
 			file = null;
 		}
 	};
-
-	private final ActionListener cipher_msg_button = e -> new Cipher_Msg_Window(gui.this, algoritmo);
-
-	private final ActionListener decipher_msg_button = e -> new Decipher_Msg_Window(gui.this);
 
 	public gui() {
 		Logger.setLog(Log);

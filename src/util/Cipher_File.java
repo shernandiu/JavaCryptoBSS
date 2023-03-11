@@ -3,10 +3,11 @@ package util;
 import exceptions.HeaderError;
 import exceptions.PasswError;
 
-import javax.crypto.*;
-import java.awt.desktop.OpenURIEvent;
+import javax.crypto.NoSuchPaddingException;
 import java.io.*;
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 public class Cipher_File extends Cipher_msg {

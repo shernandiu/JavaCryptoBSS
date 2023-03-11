@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class password_screen extends JDialog {
 	private JPasswordField passwordField1;

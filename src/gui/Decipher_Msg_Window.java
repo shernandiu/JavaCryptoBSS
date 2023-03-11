@@ -4,24 +4,18 @@ import exceptions.HeaderError;
 import exceptions.PasswError;
 import util.Cipher_msg;
 
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
-
-import util.Algoritmo;
 
 public class Decipher_Msg_Window extends JDialog {
 	private JPanel mainPanel;
@@ -32,8 +26,7 @@ public class Decipher_Msg_Window extends JDialog {
 	private JRadioButton base64RadioButton;
 	private JRadioButton ASCIIRadioButton;
 
-
-	ComponentListener cl = new ComponentAdapter() {
+	private final ComponentListener cl = new ComponentAdapter() {
 		@Override
 		public void componentResized(ComponentEvent e) {
 			super.componentResized(e);
@@ -97,14 +90,13 @@ public class Decipher_Msg_Window extends JDialog {
 		setVisible(true);
 	}
 
+	public static void main(String[] args) {
+		new Decipher_Msg_Window(null);
+	}
+
 	private void resize_window() {
 		revalidate();
 		pack();
 		repaint();
-	}
-
-
-	public static void main(String[] args) {
-		new Decipher_Msg_Window(null);
 	}
 }
