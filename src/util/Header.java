@@ -1,3 +1,7 @@
+/*
+ * DEPRECATED!!!!
+ */
+
 package util;
 
 import exceptions.HeaderError;

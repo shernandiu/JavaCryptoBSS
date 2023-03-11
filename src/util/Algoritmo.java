@@ -9,11 +9,11 @@ public enum Algoritmo {
 	;
 
 	private final String algorithm;
-	private final String name;
+	private final String common_name;
 
 	Algoritmo(String algorithm, String name) {
 		this.algorithm = algorithm;
-		this.name = name;
+		this.common_name = name;
 
 	}
 
@@ -27,7 +27,7 @@ public enum Algoritmo {
 
 	@Override
 	public String toString() {
-		return name;
+		return common_name;
 	}
 
 }

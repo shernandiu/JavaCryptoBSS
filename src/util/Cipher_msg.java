@@ -1,7 +1,10 @@
 package util;
 
+import byss.Options;
 import exceptions.HeaderError;
 import exceptions.PasswError;
+
+import byss.Header;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -15,6 +18,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Cipher_msg {
 	protected static final int ITERATIONCOUNT = 5;
@@ -115,15 +120,25 @@ public class Cipher_msg {
 	}
 
 
-	void generate_header(OutputStream os) throws IOException {
-		Header header = new Header(salt, cypher_type);
-		header.write(os);
+	void generate_header(OutputStream os) {
+		try {
+			Header header = new Header(Options.OP_NONE, cypher_type.getAlgorithm(), null, salt);
+			header.save(os);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	void read_header() throws HeaderError {
-		Header header = new Header(is);
-		salt = header.getSalt();
-		cypher_type = header.getAlgor();
+		try {
+			Header header = new Header();
+			header.load(is);
+			salt = header.getData();
+			cypher_type = Arrays.stream(Algoritmo.getListOfAlgorithms()).filter(e -> Objects.equals(e.getAlgorithm(), header.getAlgorithm1())).findAny().orElseThrow();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new HeaderError(ex.getMessage());
+		}
 	}
 
 	public byte[] getText() throws IOException {
