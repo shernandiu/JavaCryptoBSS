@@ -1,6 +1,10 @@
 package util;
 
+import exceptions.HeaderError;
+import exceptions.PasswError;
+
 import javax.crypto.*;
+import java.awt.desktop.OpenURIEvent;
 import java.io.*;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -11,33 +15,36 @@ public class Cipher_File extends Cipher_msg {
 	public static final String DECRYPTED_EXTENSION = "uncif";
 
 	private final File file;
+	private File output_file;
 
 	public Cipher_File(File file, Algoritmo cypher_type, char[] password) throws FileNotFoundException {
 		super(cypher_type, password, new FileInputStream(file));
 		this.file = file;
 	}
 
+	public Cipher_File(File file, char[] password) throws FileNotFoundException {
+		super(password, new FileInputStream(file));
+		this.file = file;
+	}
+
 	@Override
-	public void cipher() throws IOException {
-		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
+	public void cipher() throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
+		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
 		super.cipher();
 	}
 
 	@Override
-	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
-		File output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
+	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, PasswError {
+		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
 		super.decipher();
 	}
 
-	public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException {
-//		Cypher c = new Cypher(new File("test"), util.Algoritmo.PBEDM53DES.getAlgorithm(), "aaaa");
-//		c.generate_cypher();
-//		System.out.println(c.salt);
-//		c.read();
+	public File getOutput_file() {
+		return output_file;
 	}
 
 }

@@ -16,8 +16,7 @@ public class Write_Password extends JDialog {
 		super(owner);
 
 		setLocationRelativeTo(owner);
-
-		System.out.println(getOwner());
+		
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();

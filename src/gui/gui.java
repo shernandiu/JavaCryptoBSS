@@ -1,8 +1,11 @@
 package gui;
 
+import exceptions.HeaderError;
+import exceptions.PasswError;
 import util.Algoritmo;
 import util.Cipher_File;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -13,6 +16,11 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class gui extends JFrame {
 	private JPanel panel1;
@@ -36,7 +44,6 @@ public class gui extends JFrame {
 		int returnVal = jfc.showOpenDialog(jfc);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			file_route.setText(jfc.getSelectedFile().getPath());
-			System.out.println(jfc.getSelectedFile());
 			file = jfc.getSelectedFile();
 			Logger.add_text("Fichero seleccionado: " + jfc.getSelectedFile());
 		} else if (file == null)
@@ -45,7 +52,7 @@ public class gui extends JFrame {
 
 	private final ActionListener cipher_button = e -> {
 		if (file == null) {
-			Logger.add_error("Error, no se ha seleccionado archivo");
+			Logger.add_error("Error, no se ha seleccionado archivo.");
 			return;
 		}
 
@@ -57,12 +64,15 @@ public class gui extends JFrame {
 			try {
 				c = new Cipher_File(file, algoritmo, password);
 				c.cipher();
+				Logger.add_text("Fichero encriptado en: " + c.getOutput_file());
 			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error: no se puede acceder al fichero o ha sido eliminado");
+				Logger.add_error("Error: no se puede acceder al fichero o ha sido eliminado.");
 			} catch (IOException ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error al cifrar archivo");
+				Logger.add_error("Error al cifrar archivo.");
+			} catch (NoSuchAlgorithmException ex) {
+				Logger.add_error("Error: El algoritmo no se reconoce.");
+			} catch (GeneralSecurityException ex) {
+				Logger.add_error("Error con el cifrado.");
 			}
 
 			file_route.setText("Fichero: ");
@@ -87,24 +97,33 @@ public class gui extends JFrame {
 
 	private final ActionListener decipher_button = e -> {
 		if (file == null) {
-			Logger.add_error("Error, no se ha seleccionado archivo");
+			Logger.add_error("Error, no se ha seleccionado archivo.");
 			return;
 		}
 		Write_Password ps = new Write_Password(gui.this);
 
 		if (ps.getPassword() != null) {
-			password = ps.getPassword();
-			Cipher_File c;
 			try {
-				c = new Cipher_File(file, algoritmo, password);
+				password = ps.getPassword();
+				Cipher_File c = new Cipher_File(file, password);
 				c.decipher();
+				Logger.add_text("Desencriptado con " + c.getCypher_type());
+				Logger.add_text("Fichero descifrado en: " + c.getOutput_file());
 			} catch (FileNotFoundException ex) {
 				ex.printStackTrace();
-				Logger.add_error("Error fichero no encontrado");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error al descifrar el fichero");
+				Logger.add_error("Error: Fichero no encontrado.");
+			} catch (HeaderError ex) {
+				Logger.add_error("Error: No se puede leer la cabecera.");
+			} catch (PasswError ex) {
+				Logger.add_error("Error: Contraseña incorrecta, no puede descifrarse el fichero.");
+			} catch (IOException ex) {
+				Logger.add_error("Error con la entrada/salida.");
+			} catch (NoSuchAlgorithmException ex) {
+				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.");
+			} catch (GeneralSecurityException ex) {
+				Logger.add_error("Error al descifrar el fichero.");
 			}
+
 
 			file_route.setText("Fichero: ");
 			file = null;

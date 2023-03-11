@@ -1,5 +1,8 @@
 package util;
 
+import exceptions.HeaderError;
+import exceptions.PasswError;
+
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
@@ -24,7 +27,7 @@ public class Cipher_msg {
 	protected PBEParameterSpec pPS;
 
 
-	public Cipher_msg(Algoritmo cypher_type, char[] password, InputStream is) throws FileNotFoundException {
+	public Cipher_msg(Algoritmo cypher_type, char[] password, InputStream is) {
 		this.is = is;
 		this.cypher_type = cypher_type;
 		this.password = password;
@@ -34,12 +37,16 @@ public class Cipher_msg {
 		os = new ByteArrayOutputStream();
 	}
 
-	protected void generate_cypher(int ciphing) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IOException {
-		if (ciphing == Cipher.ENCRYPT_MODE)
-			salt = generate_salt();
-		else
-			read_header();
+	public Cipher_msg(char[] password, InputStream is) {
+		this.is = is;
+		this.password = password;
+		for (int i = 0; i < this.password.length; i++) {
+			this.password[i] &= 0x7F;
+		}
+		os = new ByteArrayOutputStream();
+	}
 
+	protected void generate_cypher() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
 		PBEKeySpec pbeKeySpec = new PBEKeySpec(password);
 		pPS = new PBEParameterSpec(salt, ITERATIONCOUNT);
 		SecretKeyFactory kf = SecretKeyFactory.getInstance(cypher_type.getAlgorithm());
@@ -49,54 +56,50 @@ public class Cipher_msg {
 		c = Cipher.getInstance(cypher_type.getAlgorithm());
 	}
 
-	public void cipher() throws IOException {
-		try {
-			generate_cypher(Cipher.ENCRYPT_MODE);
+	public void cipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException {
+		salt = generate_salt();
 
-			c.init(Cipher.ENCRYPT_MODE, sKey, pPS);
+		generate_cypher();
 
-			CipherOutputStream cos = new CipherOutputStream(os, c);
+		c.init(Cipher.ENCRYPT_MODE, sKey, pPS);
 
-			generate_header(os);
+		CipherOutputStream cos = new CipherOutputStream(os, c);
 
-			byte[] buffer = new byte[BUFFER_SIZE];
+		generate_header(os);
 
-			int read;
-			while (is.available() > 0) {
-				read = is.read(buffer);
-				cos.write(buffer, 0, read);
-			}
+		byte[] buffer = new byte[BUFFER_SIZE];
 
-			cos.close();
-			is.close();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
+		int read;
+		while (is.available() > 0) {
+			read = is.read(buffer);
+			cos.write(buffer, 0, read);
 		}
+
+		cos.close();
+		is.close();
 	}
 
-	//TODO: ARREGLAR CUANDO NO DETECTA EL ENCRIPTADO
-	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException {
+	public void decipher() throws IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, PasswError {
+		read_header();
+
+		generate_cypher();
+
+		c.init(Cipher.DECRYPT_MODE, sKey, pPS);
+
+		CipherInputStream cis = new CipherInputStream(is, c);
+
+		byte[] buffer = new byte[BUFFER_SIZE];
+		int read;
 		try {
-			generate_cypher(Cipher.DECRYPT_MODE);
-
-			c.init(Cipher.DECRYPT_MODE, sKey, pPS);
-
-			CipherInputStream cis = new CipherInputStream(is, c);
-
-			byte[] buffer = new byte[BUFFER_SIZE];
-
-			int read;
 			while ((read = cis.read(buffer)) > 0) {
 				os.write(buffer, 0, read);
 			}
-
+		} catch (IOException ex) {
+			throw new PasswError(ex.getMessage());
+		} finally {
 			cis.close();
 			os.close();
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
 		}
-
-
 	}
 
 	byte[] generate_salt() {
@@ -112,7 +115,7 @@ public class Cipher_msg {
 		header.write(os);
 	}
 
-	void read_header() throws IOException {
+	void read_header() throws HeaderError {
 		Header header = new Header(is);
 		salt = header.getSalt();
 		cypher_type = header.getAlgor();
@@ -122,5 +125,9 @@ public class Cipher_msg {
 		os.flush();
 		ByteArrayOutputStream os1 = (ByteArrayOutputStream) os;
 		return os1.toByteArray();
+	}
+
+	public Algoritmo getCypher_type() {
+		return cypher_type;
 	}
 }

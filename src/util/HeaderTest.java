@@ -1,5 +1,6 @@
 package util;
 
+import exceptions.HeaderError;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +29,7 @@ class HeaderTest {
 	}
 
 	@Test
-	void read() throws IOException {
+	void read() throws IOException, HeaderError {
 		byte[] array = new byte[]{10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, (byte) Arrays.stream(Algoritmo.getListOfAlgorithms()).toList().indexOf(Algoritmo.PBESHA1DESEDE)};
 
 		Header h = new Header(new ByteArrayInputStream(array));

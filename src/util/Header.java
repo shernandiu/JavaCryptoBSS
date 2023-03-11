@@ -1,5 +1,7 @@
 package util;
 
+import exceptions.HeaderError;
+
 import java.io.*;
 import java.util.Arrays;
 
@@ -16,11 +18,15 @@ public class Header {
 		this.algor = algor;
 	}
 
-	public Header(InputStream is) throws IOException {
-		DataInputStream dis = new DataInputStream(is);
-		this.salt_length = dis.readByte();
-		this.salt = dis.readNBytes(this.salt_length);
-		algor = Algoritmo.getListOfAlgorithms()[dis.readByte()];
+	public Header(InputStream is) throws HeaderError {
+		try {
+			DataInputStream dis = new DataInputStream(is);
+			this.salt_length = dis.readByte();
+			this.salt = dis.readNBytes(this.salt_length);
+			algor = Algoritmo.getListOfAlgorithms()[dis.readByte()];
+		} catch (Exception ex) {
+			throw new HeaderError(ex.getMessage());
+		}
 	}
 
 	public void write(OutputStream os) throws IOException {

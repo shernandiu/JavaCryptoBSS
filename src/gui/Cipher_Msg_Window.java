@@ -1,8 +1,10 @@
 package gui;
 
+import exceptions.HeaderError;
 import util.Algoritmo;
 import util.Cipher_msg;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,6 +12,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -57,13 +64,16 @@ public class Cipher_Msg_Window extends JDialog {
 				Cipher_msg cm = new Cipher_msg(algoritmo, passwordField1.getPassword(), new ByteArrayInputStream(input_text.getText().getBytes()));
 				cm.cipher();
 				ciphed_text = cm.getText();
+				output_text.setText(base64RadioButton.isSelected() ? Base64.getEncoder().encodeToString(ciphed_text) : new String(ciphed_text, StandardCharsets.ISO_8859_1));
 			} catch (IOException ex) {
-				Logger.add_error("Error al cifrar la cadena");
-				return;
+				Logger.add_error("Error con la entrada y salida.");
+			} catch (NoSuchAlgorithmException ex) {
+				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.");
+			} catch (InvalidKeyException ex) {
+				Logger.add_error("Error: La contraseña contiene caracteres extendidos.");
+			} catch (GeneralSecurityException ex) {
+				Logger.add_error("Error con el cifrado.");
 			}
-			output_text.setText(base64RadioButton.isSelected() ? Base64.getEncoder().encodeToString(ciphed_text) : new String(ciphed_text, StandardCharsets.ISO_8859_1));
-
-			System.out.println(Arrays.toString(ciphed_text));
 		});
 
 		base64RadioButton.addActionListener(e -> {
