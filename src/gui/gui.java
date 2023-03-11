@@ -22,7 +22,6 @@ public class gui extends JFrame {
 	private JButton descifrarButton;
 	private JButton descifrarMensajeButton;
 	private JTextField file_route;
-	private JTextArea logTextArea;
 	private JButton abrirButton;
 	private JTextPane Log;
 
@@ -62,14 +61,14 @@ public class gui extends JFrame {
 				System.out.println(jfc.getSelectedFile());
 				file = jfc.getSelectedFile();
 			} else
-				logTextArea.setText("No se ha seleccionado archivo");
+				Logger.add_text("No se ha seleccionado archivo");
 		});
 		cifrarButton.addActionListener(e -> {
 			if (file == null) {
-				logTextArea.setText("Error, no se ha seleccionado archivo");
+				Logger.add_error("Error, no se ha seleccionado archivo");
 				return;
 			}
-			logTextArea.setText("Seleccionado: " + comboBox1.getSelectedItem() + "\n Fichero: " + file_route.getText());
+			Logger.add_text("Seleccionado: " + comboBox1.getSelectedItem() + "\n Fichero: " + file_route.getText());
 
 			password_screen ps = new password_screen(this);
 
@@ -80,13 +79,13 @@ public class gui extends JFrame {
 					c = new Cipher_File(file, algoritmo, password);
 				} catch (FileNotFoundException ex) {
 					ex.printStackTrace();
-					logTextArea.setText("Error, fichero eliminado");
+					Logger.add_error("Error, fichero eliminado");
 				}
 				try {
 					c.cipher();
 				} catch (IOException ex) {
 					ex.printStackTrace();
-					logTextArea.setText("Error al cifrar archivo");
+					Logger.add_error("Error al cifrar archivo");
 				}
 
 				file_route.setText("Fichero: ");
@@ -97,10 +96,10 @@ public class gui extends JFrame {
 		file_route.addActionListener(e -> {
 			file = new File(file_route.getText());
 			if (!file.isFile()) {
-				logTextArea.setText("Error: " + file_route.getText() + " no es un fichero.");
+				Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
 				file = null;
 			} else {
-				logTextArea.setText("Seleccionado: " + file_route.getText());
+				Logger.add_error("Seleccionado: " + file_route.getText());
 			}
 		});
 		file_route.addMouseListener(new MouseAdapter() {
@@ -112,14 +111,14 @@ public class gui extends JFrame {
 		});
 		comboBox1.addActionListener(e -> {
 			algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
-			logTextArea.setText("util.Algoritmo seleccionado: " + algoritmo);
+			Logger.add_error("util.Algoritmo seleccionado: " + algoritmo);
 		});
 		descifrarButton.addActionListener(e -> {
 			if (file == null) {
-				logTextArea.setText("Error, no se ha seleccionado archivo");
+				Logger.add_error("Error, no se ha seleccionado archivo");
 				return;
 			}
-			logTextArea.setText("Seleccionado: " + comboBox1.getSelectedItem() + "\n Fichero: " + file_route.getText());
+			Logger.add_error("Seleccionado: " + comboBox1.getSelectedItem() + "\n Fichero: " + file_route.getText());
 
 			Write_Password ps = new Write_Password(gui.this);
 			System.out.println(ps.getPassword());
@@ -133,10 +132,10 @@ public class gui extends JFrame {
 					c.decipher();
 				} catch (FileNotFoundException ex) {
 					ex.printStackTrace();
-					logTextArea.setText("Error fichero no encontrado");
+					Logger.add_error("Error fichero no encontrado");
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					logTextArea.setText("Error al descifrar el fichero");
+					Logger.add_error("Error al descifrar el fichero");
 				}
 
 				file_route.setText("Fichero: ");
