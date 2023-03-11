@@ -24,12 +24,15 @@ public class gui extends JFrame {
 	private JTextField file_route;
 	private JTextArea logTextArea;
 	private JButton abrirButton;
+	private JTextPane Log;
 
 	private File file = null;
 	private Algoritmo algoritmo = Algoritmo.getListOfAlgorithms()[0];
 	private char[] password = null;
 
 	public gui() {
+		new Logger(Log);
+
 		setMinimumSize(new Dimension(600, -1));
 		setTitle("Cifrador");
 		setContentPane(panel1);
