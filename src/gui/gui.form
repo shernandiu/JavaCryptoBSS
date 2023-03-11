@@ -96,6 +96,7 @@
           <component id="6d834" class="javax.swing.JTextPane" binding="Log">
             <constraints/>
             <properties>
+              <editable value="false"/>
               <text value=""/>
             </properties>
           </component>
