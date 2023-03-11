@@ -118,12 +118,9 @@ public class Cipher_msg {
 		cypher_type = header.getAlgor();
 	}
 
-	public String getText() {
+	public byte[] getText() throws IOException {
+		os.flush();
 		ByteArrayOutputStream os1 = (ByteArrayOutputStream) os;
-		return os1.toString();
-	}
-
-	public String getTextBase64() {
-		return Base64.getEncoder().encodeToString(((ByteArrayOutputStream) os).toByteArray());
+		return os1.toByteArray();
 	}
 }

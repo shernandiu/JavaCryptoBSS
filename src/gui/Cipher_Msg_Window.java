@@ -5,44 +5,109 @@ import util.Cipher_msg;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Base64;
 
 public class Cipher_Msg_Window extends JDialog {
-	private JTextField textField1;
-	private JTextField textField2;
+	private JTextArea input_text;
+	private JTextArea output_text;
 	private JButton encriptarButton;
 	private JPanel mainPanel;
 	private JPasswordField passwordField1;
 	private JPasswordField passwordField2;
+	private JRadioButton ASCIIRadioButton;
+	private JRadioButton base64RadioButton;
+	private JProgressBar progressBar1;
 
-	private Algoritmo algoritmo;
+	private byte[] ciphed_text;
 
 	public Cipher_Msg_Window(Frame f, Algoritmo algoritmo) {
 		super(f);
-		this.algoritmo = algoritmo;
 		setLocationRelativeTo(f);
 
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
 
+
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(ASCIIRadioButton);
+		bg.add(base64RadioButton);
+
 		encriptarButton.addActionListener(e -> {
+			if (input_text.getText().length() == 0) {
+				JOptionPane.showMessageDialog(Cipher_Msg_Window.this, "No se ha introducido texto a cifrar");
+				return;
+			}
+			if (passwordField1.getPassword().length == 0) {
+				JOptionPane.showMessageDialog(Cipher_Msg_Window.this, "No se ha introducido ninguna contraseña");
+				return;
+			}
+			if (!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
+				JOptionPane.showMessageDialog(Cipher_Msg_Window.this, "Las contraseñas no coinciden");
+				return;
+			}
+
 			try {
-				System.out.println("presionado");
-				Cipher_msg cm = new Cipher_msg(algoritmo, passwordField1.getPassword(), new ByteArrayInputStream(textField1.getText().getBytes()));
+				Cipher_msg cm = new Cipher_msg(algoritmo, passwordField1.getPassword(), new ByteArrayInputStream(input_text.getText().getBytes()));
 				cm.cipher();
-				System.out.println(cm.getText());
-				textField2.setText(cm.getTextBase64());
-			} catch (FileNotFoundException ex) {
-				throw new RuntimeException(ex);
+				ciphed_text = cm.getText();
 			} catch (IOException ex) {
-				throw new RuntimeException(ex);
+				Logger.add_error("Error al cifrar la cadena");
+				return;
+			}
+			output_text.setText(base64RadioButton.isSelected() ? Base64.getEncoder().encodeToString(ciphed_text) : new String(ciphed_text, StandardCharsets.ISO_8859_1));
+
+			System.out.println(Arrays.toString(ciphed_text));
+		});
+
+		base64RadioButton.addActionListener(e -> {
+			if (ciphed_text != null)
+				output_text.setText(Base64.getEncoder().encodeToString(ciphed_text));
+		});
+		ASCIIRadioButton.addActionListener(e -> {
+			if (ciphed_text != null) {
+				output_text.setText(new String(ciphed_text, StandardCharsets.ISO_8859_1));
 			}
 		});
+		passwordField1.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				super.keyReleased(e);
+				progressBar1.setValue(util.PasswordStrength.check_strength(passwordField1.getPassword()));
+			}
+		});
+
+
+		input_text.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				resize_window();
+			}
+		});
+		output_text.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+
+				super.componentResized(e);
+				resize_window();
+			}
+		});
+
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		setVisible(true);
+	}
+
+	private void resize_window() {
+		revalidate();
+		pack();
+		repaint();
 	}
 
 	public static void main(String[] args) {

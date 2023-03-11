@@ -22,23 +22,14 @@ public class Write_Password extends JDialog {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
 
-		cancelarButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
+		cancelarButton.addActionListener(e -> dispose());
+		OKButton.addActionListener(e -> {
+			if (passwordField1.getPassword().length == 0) {
+				JOptionPane.showMessageDialog(Write_Password.this, "No se ha introducido ninguna contraseña");
+				return;
 			}
-		});
-		OKButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (passwordField1.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(Write_Password.this, "No se ha introducido ninguna contraseña");
-					return;
-				}
-				password = passwordField1.getPassword();
-				System.out.println("WP: " + password);
-				dispose();
-			}
+			password = passwordField1.getPassword();
+			dispose();
 		});
 
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
