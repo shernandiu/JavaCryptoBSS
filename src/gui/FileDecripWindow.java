@@ -3,6 +3,11 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Ventana para escribir la contraseña para encriptar un fichero.
+ *
+ * @author Santiago Hernández
+ */
 public class FileDecripWindow extends JDialog {
 	private JPasswordField passwordField1;
 	private JButton OKButton;
@@ -10,6 +15,11 @@ public class FileDecripWindow extends JDialog {
 	private JPanel mainPanel;
 	private char[] password;
 
+	/**
+	 * Constructor de la ventana
+	 *
+	 * @param owner Ventana que la crea.
+	 */
 	public FileDecripWindow(Frame owner) {
 		super(owner);
 
@@ -33,11 +43,17 @@ public class FileDecripWindow extends JDialog {
 		setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		new FileDecripWindow(null);
-	}
-
+	/**
+	 * Devuelve la contraseña escrita o null si se ha cerrado la ventana.
+	 *
+	 * @return Contraseña escrita.
+	 */
 	public char[] getPassword() {
 		return password;
+	}
+
+	// Método main pruebas
+	public static void main(String[] args) {
+		new FileDecripWindow(null);
 	}
 }

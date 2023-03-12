@@ -112,4 +112,13 @@ class Cipher_FileTest {
 		cipher_C = new Cipher_File(f, a, password.toCharArray());
 		decipher();
 	}
+
+	/**
+	 * Prueba si al desencriptar un fichero con error se borra el fichero
+	 */
+	@Test
+	void badDecription() {
+		assertThrows(Exception.class, () -> cipher_C.decipher());
+		assertFalse(new File("./Tests/resources/test." + Cipher_File.DECRYPTED_EXTENSION).exists());
+	}
 }

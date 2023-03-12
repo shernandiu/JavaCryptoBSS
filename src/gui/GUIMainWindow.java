@@ -8,15 +8,18 @@ import util.Cipher_File;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Ventana principal del programa.
+ *
+ * @author Santiago Hernández
+ */
 public class GUIMainWindow extends JFrame {
 	private final ActionListener decipher_msg_button = e -> new MsgDecipherWindow(GUIMainWindow.this);
 	private JPanel panel1;
@@ -28,7 +31,24 @@ public class GUIMainWindow extends JFrame {
 	private JTextField file_route;
 	private JButton abrirButton;
 	private JTextPane Log;
+
+	// Fichero seleccionado
 	private File file = null;
+
+	// Algoritmo seleccionado
+	// Por defecto el primero de la lista
+	private Algoritmo algoritmo = Algoritmo.getListOfAlgorithms()[0];
+
+	// Contraseña especificada para los cifrados de fichero
+	private char[] password = null;
+
+	/**
+	 * Acción al pulsar el botón de abrir fichero.
+	 * <p>
+	 * Muestra una ventana de selección de fichero que permite filtrar por todos los ficheros o <i>.cif</i>.
+	 * <p>
+	 * Informa al usuario del fichero seleccionado o error en el caso de no seleccionar ninguno.
+	 */
 	private final ActionListener open_file = e -> {
 		JFileChooser jfc = new JFileChooser();
 		jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros encriptados (.%s)", Cipher_File.ENCRYPTED_EXTENSION), Cipher_File.ENCRYPTED_EXTENSION));
@@ -40,6 +60,11 @@ public class GUIMainWindow extends JFrame {
 		} else if (file == null)
 			Logger.add_error("No se ha seleccionado archivo");
 	};
+	/**
+	 * Acción al escribir sobre el cuadro con la ruta del fichero.
+	 * <p>
+	 * Informa al usuario si existe un fichero en la ruta especificada.
+	 */
 	private final ActionListener file_route_area = e -> {
 		file = new File(file_route.getText());
 		if (!file.isFile()) {
@@ -49,13 +74,26 @@ public class GUIMainWindow extends JFrame {
 			Logger.add_text("Fichero seleccionado: " + file_route.getText());
 		}
 	};
-	private Algoritmo algoritmo = Algoritmo.getListOfAlgorithms()[0];
+	/**
+	 * Acción al seleccionar un algoritmo de la lista.
+	 * <p>
+	 * Informa del algoritmo escogido.
+	 */
 	private final ActionListener cipher_selection = e -> {
 		algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
 		Logger.add_text("Algoritmo seleccionado: " + algoritmo);
 	};
+	/**
+	 * Acción al pulsar el botón de encriptar mensaje.
+	 * <p>
+	 * Mostrar una {@link MsgCipherWindow}
+	 */
 	private final ActionListener cipher_msg_button = e -> new MsgCipherWindow(GUIMainWindow.this, algoritmo);
-	private char[] password = null;
+	/**
+	 * Acción al pulsar el botón de encriptar fichero
+	 * <p>
+	 * Comprueba si se ha escogido un fichero y lanza una {@link FileEncWindow}
+	 */
 	private final ActionListener cipher_button = e -> {
 		if (file == null) {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
@@ -85,6 +123,11 @@ public class GUIMainWindow extends JFrame {
 			file = null;
 		}
 	};
+	/**
+	 * Acción al pulsar el botón de encriptar fichero
+	 * <p>
+	 * Comprueba si se ha escogido un fichero y lanza una {@link FileDecripWindow}
+	 */
 	private final ActionListener decipher_button = e -> {
 		if (file == null) {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
@@ -124,9 +167,41 @@ public class GUIMainWindow extends JFrame {
 			file = null;
 		}
 	};
+	/**
+	 * Acción al seleccionar y deseleccionar el cuadro con la ruta del fichero.
+	 * <p>
+	 * Insertar <i>Fichero:</i> si no se inserta nada o borrarlo al perder el focus.
+	 * <p>
+	 * Mostrar error si al escribir no se corresponde con la ruta de un fichero.
+	 */
+	private final FocusListener focus_path = new FocusAdapter() {
+		@Override
+		public void focusGained(FocusEvent e) {
+			super.focusGained(e);
+			if (file_route.getText().equals("Fichero:")) file_route.setText("");
+		}
 
+		@Override
+		public void focusLost(FocusEvent e) {
+			super.focusLost(e);
+			if (file_route.getText().equals("")) {
+				file_route.setText("Fichero:");
+				return;
+			}
+			file = new File(file_route.getText());
+			if (!file.isFile()) {
+				Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
+				file = null;
+			} else {
+				Logger.add_text("Fichero seleccionado: " + file_route.getText());
+			}
+		}
+	};
+
+	/**
+	 * Constructor de la ventana
+	 */
 	public GUIMainWindow() {
-		Logger.setLog(Log);
 
 		setMinimumSize(new Dimension(600, -1));
 		setTitle("Cifrador");
@@ -136,26 +211,25 @@ public class GUIMainWindow extends JFrame {
 
 		setVisible(true);
 
+		// Inicializar el log
+		Logger.setLog(Log);
+
+		// Insertar los algoritmos disponibles en el desplegable.
 		for (Algoritmo a : Algoritmo.getListOfAlgorithms())
 			comboBox1.addItem(a);
 
-
+		// Añadir los listeners a los botones
 		abrirButton.addActionListener(open_file);
 		cifrarButton.addActionListener(cipher_button);
 		file_route.addActionListener(file_route_area);
-		file_route.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				super.mouseClicked(e);
-				if (file_route.getText().equals("Fichero:")) file_route.setText("");
-			}
-		});
 		comboBox1.addActionListener(cipher_selection);
 		descifrarButton.addActionListener(decipher_button);
 		cifrarMensajeButton.addActionListener(cipher_msg_button);
 		descifrarMensajeButton.addActionListener(decipher_msg_button);
+		file_route.addFocusListener(focus_path);
 	}
 
+	// Método main para pruebas.
 	public static void main(String[] args) {
 		new GUIMainWindow();
 	}

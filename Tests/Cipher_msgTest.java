@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.Algoritmo;
 import util.Cipher_msg;
-import util.Header;
 
 import javax.crypto.NoSuchPaddingException;
 import java.io.ByteArrayInputStream;

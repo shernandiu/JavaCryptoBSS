@@ -9,9 +9,9 @@ package byss;
  * @version 1.1
  */
 
-import java.io.*;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
 
 
 /**
@@ -20,7 +20,7 @@ import javax.crypto.spec.SecretKeySpec;
  * La cabecera estará cifrada con una clave fija.
  * Formato de la cabecera:
  * --------------------------------------------------------
- * |Longitud (2 bytes)|Datos (array de 'longitud bytes', cifrados) ...        |  
+ * |Longitud (2 bytes)|Datos (array de 'longitud bytes', cifrados) ...        |
  * --------------------------------------------------------
  */
 public class BasicHeader {
@@ -50,7 +50,8 @@ public class BasicHeader {
 
 	/**
 	 * Constructor. Inicia los atributos con valores suministrados.
-	 * @param  basicData   - Datos a almacenar en la cabecera
+	 *
+	 * @param basicData - Datos a almacenar en la cabecera
 	 */
 	public BasicHeader(byte[] basicData) {
 		setbasicData(basicData);
@@ -75,9 +76,10 @@ public class BasicHeader {
 	/**
 	 * Intenta cargar los datos de una cabecera desde un InputStream ya abierto.
 	 * Si tiene exito, los datos quedan en la clase.
+	 *
 	 * @param is el InputStream abierto.
-	 * @throws Exception  Si ocurre un error de entrada o salida.
 	 * @return true si la carga es correcta, false en otro caso
+	 * @throws Exception Si ocurre un error de entrada o salida.
 	 */
 	public boolean load(InputStream is) throws Exception {
 		boolean breturn = false;
@@ -97,9 +99,10 @@ public class BasicHeader {
 
 	/**
 	 * Intenta guardar la cabecera actual en un OutputStream ya abierto.
+	 *
 	 * @param os el OutputStream abierto
-	 * @throws Exception  Si ocurre un error de entrada o salida.
 	 * @return true si tiene exito, false en otro caso
+	 * @throws Exception Si ocurre un error de entrada o salida.
 	 */
 	public boolean save(OutputStream os) throws Exception {
 		boolean breturn = false;
@@ -135,7 +138,6 @@ public class BasicHeader {
 	/**
 	 * Prueba el funcionamiento de la clase, creando una cabecera, guardandola en un
 	 * fichero y recuperandola posteriomente.
-	 *
 	 */
 	public void test() {
 		try {
@@ -162,7 +164,6 @@ public class BasicHeader {
 
 	/**
 	 * Programa principal para prueba
-	 *
 	 */
 	public static void main(String args[]) {
 		byte basicData[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
