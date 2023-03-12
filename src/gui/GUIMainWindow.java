@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
-public class gui extends JFrame {
-	private final ActionListener decipher_msg_button = e -> new Decipher_Msg_Window(gui.this);
+public class GUIMainWindow extends JFrame {
+	private final ActionListener decipher_msg_button = e -> new MsgDecipherWindow(GUIMainWindow.this);
 	private JPanel panel1;
 	private JComboBox<Algoritmo> comboBox1;
 	private JButton cifrarButton;
@@ -54,7 +54,7 @@ public class gui extends JFrame {
 		algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
 		Logger.add_text("Algoritmo seleccionado: " + algoritmo);
 	};
-	private final ActionListener cipher_msg_button = e -> new Cipher_Msg_Window(gui.this, algoritmo);
+	private final ActionListener cipher_msg_button = e -> new MsgCipherWindow(GUIMainWindow.this, algoritmo);
 	private char[] password = null;
 	private final ActionListener cipher_button = e -> {
 		if (file == null) {
@@ -62,7 +62,7 @@ public class gui extends JFrame {
 			return;
 		}
 
-		password_screen ps = new password_screen(this);
+		FileEncWindow ps = new FileEncWindow(this);
 
 		if (ps.getPassword() != null) {
 			password = ps.getPassword();
@@ -90,7 +90,7 @@ public class gui extends JFrame {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
 			return;
 		}
-		Write_Password ps = new Write_Password(gui.this);
+		FileDecripWindow ps = new FileDecripWindow(GUIMainWindow.this);
 
 		if (ps.getPassword() != null) {
 			try {
@@ -125,7 +125,7 @@ public class gui extends JFrame {
 		}
 	};
 
-	public gui() {
+	public GUIMainWindow() {
 		Logger.setLog(Log);
 
 		setMinimumSize(new Dimension(600, -1));
@@ -157,6 +157,6 @@ public class gui extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new gui();
+		new GUIMainWindow();
 	}
 }

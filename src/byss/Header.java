@@ -9,14 +9,17 @@ package byss;
  * @version 1.0
  */
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
  * Clase para la gestión de la cabecera que se añade los mensajes cifrados (ficheros).
  * Permite gestionar los diferentes atributos que se almacenan:
  * --------------------------------------------------------
- * |Mark|Operacion|Algoritmo1|Algoritmo2|Datos ...        |  
+ * |Mark|Operacion|Algoritmo1|Algoritmo2|Datos ...        |
  * --------------------------------------------------------
  */
 public class Header extends BasicHeader {
@@ -50,9 +53,10 @@ public class Header extends BasicHeader {
 
 	/**
 	 * Constructor. Inicia los atributos con valores suministrados.
+	 *
 	 * @param algorithm1 - nombre estándar del algoritmo 1
 	 * @param algorithm2 - nombre estándar del algoritmo 2
-	 * @param data - Datos usados con los algoritmos (salt, ...)
+	 * @param data       - Datos usados con los algoritmos (salt, ...)
 	 */
 	public Header(byte operation, String algorithm1, String algorithm2, byte[] data) {
 		this.operation = operation;
@@ -84,9 +88,10 @@ public class Header extends BasicHeader {
 	/**
 	 * Intenta cargar los datos de una cabecera desde un InputStream ya abierto.
 	 * Si tiene exito, los datos quedan en la clase.
+	 *
 	 * @param is el InputStream abierto.
-	 * @throws Exception  Si ocurre un error de entrada o salida.
 	 * @return true si la carga es correcta, false en otro caso
+	 * @throws Exception Si ocurre un error de entrada o salida.
 	 */
 	public boolean load(InputStream is) throws Exception {
 		boolean breturn = false;
@@ -111,9 +116,10 @@ public class Header extends BasicHeader {
 
 	/**
 	 * Intenta guardar la cabecera actual en un OutputStream ya abierto.
+	 *
 	 * @param os el OutputStream abierto
-	 * @throws Exception  Si ocurre un error de entrada o salida.
 	 * @return true si tiene exito, false en otro caso
+	 * @throws Exception Si ocurre un error de entrada o salida.
 	 */
 	public boolean save(OutputStream os) throws Exception {
 		boolean breturn = false;
@@ -137,7 +143,6 @@ public class Header extends BasicHeader {
 	/**
 	 * Prueba el funcionamiento de la clase, creando una cabecera, guardandola en un
 	 * fichero y recuperandola posteriomente.
-	 *
 	 */
 	public void test() {
 		try {
@@ -166,7 +171,6 @@ public class Header extends BasicHeader {
 
 	/**
 	 * Programa principal para prueba
-	 *
 	 */
 	public static void main(String args[]) {
 		byte data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

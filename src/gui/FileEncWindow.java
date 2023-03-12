@@ -8,7 +8,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
-public class password_screen extends JDialog {
+public class FileEncWindow extends JDialog {
 	private JPasswordField passwordField1;
 	private JButton okButton;
 	private JButton cancelarButton;
@@ -17,7 +17,7 @@ public class password_screen extends JDialog {
 	private JProgressBar progressBar1;
 	private char[] password = null;
 
-	public password_screen(Frame owner) {
+	public FileEncWindow(Frame owner) {
 		setLocationRelativeTo(owner);
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -42,11 +42,11 @@ public class password_screen extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (passwordField1.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(password_screen.this, "No se ha introducido ninguna contraseña");
+					JOptionPane.showMessageDialog(FileEncWindow.this, "No se ha introducido ninguna contraseña");
 					return;
 				}
 				if (!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
-					JOptionPane.showMessageDialog(password_screen.this, "Las contraseñas no coinciden");
+					JOptionPane.showMessageDialog(FileEncWindow.this, "Las contraseñas no coinciden");
 					return;
 				}
 				password = passwordField1.getPassword();
@@ -58,7 +58,7 @@ public class password_screen extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new password_screen(null);
+		new FileEncWindow(null);
 	}
 
 

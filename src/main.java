@@ -1,4 +1,4 @@
-import gui.gui;
+import gui.GUIMainWindow;
 
 import javax.swing.*;
 
@@ -9,6 +9,6 @@ public class main {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		new gui();
+		new GUIMainWindow();
 	}
 }

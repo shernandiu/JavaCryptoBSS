@@ -17,7 +17,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class Decipher_Msg_Window extends JDialog {
+public class MsgDecipherWindow extends JDialog {
 	private JPanel mainPanel;
 	private JTextArea input_text;
 	private JButton desencriptarButton;
@@ -34,7 +34,7 @@ public class Decipher_Msg_Window extends JDialog {
 		}
 	};
 
-	public Decipher_Msg_Window(Frame f) {
+	public MsgDecipherWindow(Frame f) {
 		super(f);
 		setLocationRelativeTo(f);
 		setContentPane(mainPanel);
@@ -48,7 +48,7 @@ public class Decipher_Msg_Window extends JDialog {
 		desencriptarButton.addActionListener(e -> {
 			try {
 				if (passwordField1.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(Decipher_Msg_Window.this, "No se ha introducido ninguna contraseña.");
+					JOptionPane.showMessageDialog(MsgDecipherWindow.this, "No se ha introducido ninguna contraseña.");
 					return;
 				}
 
@@ -91,7 +91,7 @@ public class Decipher_Msg_Window extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new Decipher_Msg_Window(null);
+		new MsgDecipherWindow(null);
 	}
 
 	private void resize_window() {

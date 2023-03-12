@@ -3,14 +3,14 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 
-public class Write_Password extends JDialog {
+public class FileDecripWindow extends JDialog {
 	private JPasswordField passwordField1;
 	private JButton OKButton;
 	private JButton cancelarButton;
 	private JPanel mainPanel;
 	private char[] password;
 
-	public Write_Password(Frame owner) {
+	public FileDecripWindow(Frame owner) {
 		super(owner);
 
 		setLocationRelativeTo(owner);
@@ -22,7 +22,7 @@ public class Write_Password extends JDialog {
 		cancelarButton.addActionListener(e -> dispose());
 		OKButton.addActionListener(e -> {
 			if (passwordField1.getPassword().length == 0) {
-				JOptionPane.showMessageDialog(Write_Password.this, "No se ha introducido ninguna contraseña");
+				JOptionPane.showMessageDialog(FileDecripWindow.this, "No se ha introducido ninguna contraseña");
 				return;
 			}
 			password = passwordField1.getPassword();
@@ -34,7 +34,7 @@ public class Write_Password extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new Write_Password(null);
+		new FileDecripWindow(null);
 	}
 
 	public char[] getPassword() {

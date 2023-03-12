@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class Cipher_Msg_Window extends JDialog {
+public class MsgCipherWindow extends JDialog {
 	private JTextArea input_text;
 	private JTextArea output_text;
 	private JButton encriptarButton;
@@ -31,7 +31,7 @@ public class Cipher_Msg_Window extends JDialog {
 
 	private byte[] ciphed_text;
 
-	public Cipher_Msg_Window(Frame f, Algoritmo algoritmo) {
+	public MsgCipherWindow(Frame f, Algoritmo algoritmo) {
 		super(f);
 		setLocationRelativeTo(f);
 
@@ -46,15 +46,15 @@ public class Cipher_Msg_Window extends JDialog {
 
 		encriptarButton.addActionListener(e -> {
 			if (input_text.getText().length() == 0) {
-				JOptionPane.showMessageDialog(Cipher_Msg_Window.this, "No se ha introducido texto a cifrar");
+				JOptionPane.showMessageDialog(MsgCipherWindow.this, "No se ha introducido texto a cifrar");
 				return;
 			}
 			if (passwordField1.getPassword().length == 0) {
-				JOptionPane.showMessageDialog(Cipher_Msg_Window.this, "No se ha introducido ninguna contraseña");
+				JOptionPane.showMessageDialog(MsgCipherWindow.this, "No se ha introducido ninguna contraseña");
 				return;
 			}
 			if (!Arrays.equals(passwordField1.getPassword(), passwordField2.getPassword())) {
-				JOptionPane.showMessageDialog(Cipher_Msg_Window.this, "Las contraseñas no coinciden");
+				JOptionPane.showMessageDialog(MsgCipherWindow.this, "Las contraseñas no coinciden");
 				return;
 			}
 
