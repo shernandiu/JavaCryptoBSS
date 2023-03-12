@@ -32,7 +32,7 @@ public class MsgCipherWindow extends JDialog {
 	private JProgressBar progressBar1;
 
 	private byte[] ciphed_text;
-	private Algoritmo alg;
+	private final Algoritmo alg;
 
 	/**
 	 * Acción para redimensionar la ventana cada vez que las entradas de texto varían de tamaño.

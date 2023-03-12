@@ -130,7 +130,7 @@ public class MsgDecipherWindow extends JDialog {
 		repaint();
 	}
 
-	// Pruebas. no usar
+	// Pruebas. No usar
 	public static void main(String[] args) {
 		new MsgDecipherWindow(null);
 	}

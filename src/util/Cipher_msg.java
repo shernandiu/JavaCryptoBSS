@@ -133,7 +133,8 @@ public class Cipher_msg {
 	/**
 	 * Descifra el mensaje cifrado indicado en el constructor leyendo los parámetros indicados en la cabecera del mensaje
 	 * guardando el texto en claro resultante en el buffer de salida accesible mediante {@link Cipher_msg#getText()} en
-	 * el caso de que nos e produzcan errores.
+	 * el caso de que no se produzcan errores.
+	 * <p>Al finalizar sin errores cierra los flujos de entrada y salida.
 	 *
 	 * @throws IOException                        Error con la entrada y salida de los mensajes
 	 * @throws PasswError                         La contraseña no es correcta y no se puede descifrar el mensaje.
@@ -150,18 +151,15 @@ public class Cipher_msg {
 
 		c.init(Cipher.DECRYPT_MODE, sKey, pPS);
 
-		CipherInputStream cis = new CipherInputStream(is, c);
-
-		byte[] buffer = new byte[BUFFER_SIZE];
-		int read;
-		try {
+		try (CipherInputStream cis = new CipherInputStream(is, c)) {
+			byte[] buffer = new byte[BUFFER_SIZE];
+			int read;
 			while ((read = cis.read(buffer)) > 0) {
 				os.write(buffer, 0, read);
 			}
 		} catch (IOException ex) {
 			throw new PasswError(ex.getMessage());
 		} finally {
-			cis.close();
 			os.close();
 		}
 	}
