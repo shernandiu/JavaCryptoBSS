@@ -12,7 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 /**
@@ -210,7 +213,7 @@ public class Cipher_msg {
 	 * descifrado.
 	 *
 	 * @return Array de bytes con el resultado del proceso
-	 * @throws IOException
+	 * @throws IOException Si ocurre un error al limpiar el flujo.
 	 */
 	public byte[] getText() throws IOException {
 		os.flush();

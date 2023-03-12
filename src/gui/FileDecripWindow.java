@@ -22,14 +22,17 @@ public class FileDecripWindow extends JDialog {
 	 */
 	public FileDecripWindow(Frame owner) {
 		super(owner);
-
 		setLocationRelativeTo(owner);
-
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
 
+		// Añadir listeners
+		
+		// Cerrar al pulsar cancelar
 		cancelarButton.addActionListener(e -> dispose());
+		// Comprobar que se ha introducido contraseña.
+		// Mostrar ventana de diálogo.
 		OKButton.addActionListener(e -> {
 			if (passwordField1.getPassword().length == 0) {
 				JOptionPane.showMessageDialog(FileDecripWindow.this, "No se ha introducido ninguna contraseña");
@@ -39,6 +42,7 @@ public class FileDecripWindow extends JDialog {
 			dispose();
 		});
 
+		// Asignar modalidad
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		setVisible(true);
 	}

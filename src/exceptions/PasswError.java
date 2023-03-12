@@ -1,7 +1,5 @@
 package exceptions;
 
-import java.security.GeneralSecurityException;
-
 /**
  * Excepción para controlar errores en el proceso de descifrado por contraseña errónea.
  *
