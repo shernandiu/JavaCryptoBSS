@@ -56,7 +56,7 @@ public class GUIMainWindow extends JFrame {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			file_route.setText(jfc.getSelectedFile().getPath());
 			file = jfc.getSelectedFile();
-			Logger.add_text("Fichero seleccionado: " + jfc.getSelectedFile());
+			Logger.add_text("Fichero seleccionado: " + jfc.getSelectedFile().getAbsolutePath());
 		} else if (file == null)
 			Logger.add_error("No se ha seleccionado archivo");
 	};
@@ -71,7 +71,7 @@ public class GUIMainWindow extends JFrame {
 			Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
 			file = null;
 		} else {
-			Logger.add_text("Fichero seleccionado: " + file_route.getText());
+			Logger.add_text("Fichero seleccionado: " + file.getAbsolutePath());
 		}
 	};
 	/**
@@ -193,7 +193,7 @@ public class GUIMainWindow extends JFrame {
 				Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
 				file = null;
 			} else {
-				Logger.add_text("Fichero seleccionado: " + file_route.getText());
+				Logger.add_text("Fichero seleccionado: " + file.getAbsolutePath());
 			}
 		}
 	};
