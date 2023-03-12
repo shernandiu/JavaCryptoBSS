@@ -31,7 +31,7 @@ class Cipher_FileTest {
 
 	@BeforeEach
 	void setUp() throws FileNotFoundException {
-		f = new File("./Tests/resources/test.txt");
+		f = new File("./test/resources/test.txt");
 		cipher_C = new Cipher_File(f, Algoritmo.getListOfAlgorithms()[0], password.toCharArray());
 	}
 
@@ -42,7 +42,7 @@ class Cipher_FileTest {
 	@Test
 	void cipher() {
 		assertDoesNotThrow(() -> cipher_C.cipher());
-		File outputfile = new File("./Tests/resources/test." + Cipher_File.ENCRYPTED_EXTENSION);
+		File outputfile = new File("./test/resources/test." + Cipher_File.ENCRYPTED_EXTENSION);
 		assertTrue(outputfile.exists());
 		assertEquals(outputfile.getAbsoluteFile(), cipher_C.getOutput_file().getAbsoluteFile());
 
@@ -57,11 +57,11 @@ class Cipher_FileTest {
 	@Test
 	void decipher() throws Exception {
 		cipher_C.cipher();
-		File outputfile = new File("./Tests/resources/test." + Cipher_File.ENCRYPTED_EXTENSION);
+		File outputfile = new File("./test/resources/test." + Cipher_File.ENCRYPTED_EXTENSION);
 
 		Cipher_File decip = new Cipher_File(outputfile, password.toCharArray());
 		decip.decipher();
-		File decipfile = new File("./Tests/resources/test." + Cipher_File.DECRYPTED_EXTENSION);
+		File decipfile = new File("./test/resources/test." + Cipher_File.DECRYPTED_EXTENSION);
 
 		assertTrue(decipfile.exists());
 
@@ -119,6 +119,6 @@ class Cipher_FileTest {
 	@Test
 	void badDecription() {
 		assertThrows(Exception.class, () -> cipher_C.decipher());
-		assertFalse(new File("./Tests/resources/test." + Cipher_File.DECRYPTED_EXTENSION).exists());
+		assertFalse(new File("./test/resources/test." + Cipher_File.DECRYPTED_EXTENSION).exists());
 	}
 }
