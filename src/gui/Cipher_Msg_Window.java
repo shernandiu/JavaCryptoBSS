@@ -112,9 +112,9 @@ public class Cipher_Msg_Window extends JDialog {
 		setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		new Cipher_Msg_Window(null, Algoritmo.PBEDM53DES);
-	}
+//	public static void main(String[] args) {
+//		new Cipher_Msg_Window(null, Algoritmo.PBEDM53DES);
+//	}
 
 	private void resize_window() {
 		revalidate();

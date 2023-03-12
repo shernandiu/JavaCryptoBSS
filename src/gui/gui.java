@@ -103,14 +103,19 @@ public class gui extends JFrame {
 				ex.printStackTrace();
 				Logger.add_error("Error: Fichero no encontrado.");
 			} catch (HeaderError ex) {
+				ex.printStackTrace();
 				Logger.add_error("Error: No se puede leer la cabecera.");
 			} catch (PasswError ex) {
+				ex.printStackTrace();
 				Logger.add_error("Error: Contraseña incorrecta, no puede descifrarse el fichero.");
 			} catch (IOException ex) {
+				ex.printStackTrace();
 				Logger.add_error("Error con la entrada/salida.");
 			} catch (NoSuchAlgorithmException ex) {
+				ex.printStackTrace();
 				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.");
 			} catch (GeneralSecurityException ex) {
+				ex.printStackTrace();
 				Logger.add_error("Error al descifrar el fichero.");
 			}
 
@@ -159,6 +164,4 @@ public class gui extends JFrame {
 		}
 		new gui();
 	}
-
-
 }

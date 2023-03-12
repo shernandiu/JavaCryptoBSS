@@ -1,10 +1,9 @@
 package util;
 
+import byss.Header;
 import byss.Options;
 import exceptions.HeaderError;
 import exceptions.PasswError;
-
-import byss.Header;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -129,14 +128,15 @@ public class Cipher_msg {
 		}
 	}
 
-	void read_header() throws HeaderError {
+	void read_header() throws HeaderError, NoSuchAlgorithmException {
 		try {
 			Header header = new Header();
 			header.load(is);
 			salt = header.getData();
-			cypher_type = Arrays.stream(Algoritmo.getListOfAlgorithms()).filter(e -> Objects.equals(e.getAlgorithm(), header.getAlgorithm1())).findAny().orElseThrow();
+			cypher_type = Arrays.stream(Algoritmo.getListOfAlgorithms()).filter(e -> Objects.equals(e.getAlgorithm(), header.getAlgorithm1())).findAny().orElseThrow(NoSuchAlgorithmException::new);
+		} catch (NoSuchAlgorithmException ex) {
+			throw ex;
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			throw new HeaderError(ex.getMessage());
 		}
 	}
