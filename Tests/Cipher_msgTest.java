@@ -1,8 +1,11 @@
+import exceptions.HeaderError;
+import exceptions.PasswError;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.Algoritmo;
 import util.Cipher_msg;
+import util.Header;
 
 import javax.crypto.NoSuchPaddingException;
 import java.io.ByteArrayInputStream;
@@ -73,5 +76,28 @@ class Cipher_msgTest {
 		decipher_C = new Cipher_msg(password.toCharArray(), new ByteArrayInputStream(cipher_C.getText()));
 		decipher_C.decipher();
 		assertEquals(decipher_C.getCypher_type().getAlgorithm(), Algoritmo.getListOfAlgorithms()[0].getAlgorithm());
+	}
+
+	/**
+	 * Prueba que un mensaje lanza error al descifrar con contraseñas erróneas.
+	 */
+	@Test
+	void testBadPassword() throws Exception {
+		cipher_C.cipher();
+
+		decipher_C = new Cipher_msg("ThisIsNotThePassword".toCharArray(), new ByteArrayInputStream(cipher_C.getText()));
+
+		assertThrowsExactly(PasswError.class, () -> decipher_C.decipher(), "No badpassword error");
+	}
+
+	/**
+	 * Prueba que un mensaje lanza error al descifrar un mensaje no cifrado
+	 * al intentar leer la cabecera.
+	 */
+	@Test
+	void testBadMsg() throws Exception {
+		decipher_C = new Cipher_msg(password.toCharArray(), new ByteArrayInputStream("0000This is not an encrypted message".getBytes()));
+
+		assertThrowsExactly(HeaderError.class, () -> decipher_C.decipher(), "Decipher non encrypted message");
 	}
 }

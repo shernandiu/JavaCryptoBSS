@@ -44,6 +44,8 @@ class Cipher_FileTest {
 		assertDoesNotThrow(() -> cipher_C.cipher());
 		File outputfile = new File("./Tests/resources/test." + Cipher_File.ENCRYPTED_EXTENSION);
 		assertTrue(outputfile.exists());
+		assertEquals(outputfile.getAbsoluteFile(), cipher_C.getOutput_file().getAbsoluteFile());
+
 		outputfile.delete();
 	}
 

@@ -17,8 +17,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class Cipher_msg {
 	protected static final int ITERATIONCOUNT = 5;
@@ -131,7 +129,8 @@ public class Cipher_msg {
 	private void read_header() throws HeaderError, NoSuchAlgorithmException {
 		try {
 			Header header = new Header();
-			header.load(is);
+			if (!header.load(is))
+				throw new HeaderError("Cant read header");
 			salt = header.getData();
 			cypher_type = Algoritmo.get(header.getAlgorithm1());
 		} catch (NoSuchAlgorithmException ex) {
