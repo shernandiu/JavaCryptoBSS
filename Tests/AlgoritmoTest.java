@@ -1,6 +1,5 @@
-package util;
-
 import org.junit.jupiter.api.Test;
+import util.Algoritmo;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -11,12 +10,18 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+/**
+ * Test para probar que todos los algoritmos de la máquina son usables para crear secret keys
+ *
+ * @author Santiago Hernández
+ */
 class AlgoritmoTest {
 
-
+	/**
+	 * Prueba a crear varios {@link Cipher} e inializarlos con todos los algoritmos de PBE.
+	 */
 	@Test
 	void getListOfAlgorithms() {
-		System.out.println(Arrays.stream(Algoritmo.getListOfAlgorithms()).toList());
 		for (Algoritmo a : Algoritmo.getListOfAlgorithms()) {
 			assertDoesNotThrow(() -> {
 

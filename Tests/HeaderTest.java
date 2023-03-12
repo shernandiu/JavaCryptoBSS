@@ -1,7 +1,7 @@
-package util;
-
 import exceptions.HeaderError;
 import org.junit.jupiter.api.Test;
+import util.Algoritmo;
+import util.Header;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
