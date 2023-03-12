@@ -1,4 +1,4 @@
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import util.Algoritmo;
 
 import javax.crypto.Cipher;
@@ -6,9 +6,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test para probar que todos los algoritmos de la máquina son usables para crear secret keys
@@ -37,5 +38,11 @@ class AlgoritmoTest {
 
 			}, a.toString());
 		}
+	}
+
+	@Test
+	void get() throws NoSuchAlgorithmException {
+		assertEquals(Algoritmo.get("PBEWithMD5AndDES").toString(), "PBE con MD5 & DES", "Cant get PBE/MD5/DES");
+		assertThrows(NoSuchAlgorithmException.class, () -> Algoritmo.get("ThisShouldCauseException"), "Does not throws with invented");
 	}
 }

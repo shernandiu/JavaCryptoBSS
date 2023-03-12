@@ -111,7 +111,7 @@ public class Cipher_msg {
 		}
 	}
 
-	byte[] generate_salt() {
+	private byte[] generate_salt() {
 		byte[] salt = new byte[SALT_DEFAULT_SIZE];
 		SecureRandom sr = new SecureRandom();
 		sr.nextBytes(salt);
@@ -128,12 +128,12 @@ public class Cipher_msg {
 		}
 	}
 
-	void read_header() throws HeaderError, NoSuchAlgorithmException {
+	private void read_header() throws HeaderError, NoSuchAlgorithmException {
 		try {
 			Header header = new Header();
 			header.load(is);
 			salt = header.getData();
-			cypher_type = Arrays.stream(Algoritmo.getListOfAlgorithms()).filter(e -> Objects.equals(e.getAlgorithm(), header.getAlgorithm1())).findAny().orElseThrow(NoSuchAlgorithmException::new);
+			cypher_type = Algoritmo.get(header.getAlgorithm1());
 		} catch (NoSuchAlgorithmException ex) {
 			throw ex;
 		} catch (Exception ex) {
