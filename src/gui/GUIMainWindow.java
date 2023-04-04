@@ -2,6 +2,7 @@ package gui;
 
 import exceptions.HeaderError;
 import exceptions.PasswError;
+import gui.util.SeparatorComboBox;
 import util.Algoritmo;
 import util.Cipher_File;
 
@@ -205,7 +206,7 @@ public class GUIMainWindow extends JFrame {
 	 * Constructor de la ventana
 	 */
 	public GUIMainWindow() {
-
+		ListCellRenderer<Algoritmo> lcr = new SeparatorComboBox<Algoritmo>();
 		setMinimumSize(new Dimension(600, -1));
 		setTitle("Cifrador");
 		setContentPane(panel1);
@@ -218,7 +219,11 @@ public class GUIMainWindow extends JFrame {
 		Logger.setLog(Log);
 
 		// Insertar los algoritmos disponibles en el desplegable.
-		for (Algoritmo a : Algoritmo.getListOfAlgorithms())
+		comboBox1.setRenderer(lcr);
+		for (Algoritmo a : Algoritmo.list_PBE_alg)
+			comboBox1.addItem(a);
+		comboBox1.addItem(null);
+		for (Algoritmo a : Algoritmo.list_PKEY_alg)
 			comboBox1.addItem(a);
 
 		// Añadir los listeners a los botones

@@ -1,5 +1,7 @@
 package util;
 
+import byssSYM.Options;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
@@ -14,8 +16,10 @@ import java.util.Optional;
  * @author Santiago Hernández
  */
 public class Algoritmo {
-	private static final Algoritmo[] list_alg;                              //lista con todos los algoritmos disponibles
-	private static final Map<String, Algoritmo> alg_map = new HashMap<>();  // diccionario con el par nombre->algoritmo
+	public static final Algoritmo[] list_alg;                              //lista con todos los algoritmos disponibles
+	public static final Algoritmo[] list_PBE_alg;                          //lista con todos los algoritmos de PBE disponibles
+	public static final Algoritmo[] list_PKEY_alg;                         //lista con todos los algoritmos de clave pública disponibles
+	public static final Map<String, Algoritmo> alg_map = new HashMap<>();  // diccionario con el par nombre->algoritmo
 
 	static {
 		/* Obtención de los algoritmos disponibles
@@ -26,13 +30,29 @@ public class Algoritmo {
 				.filter(service -> "SecretKeyFactory".equals(service.getType()))
 				.map(Provider.Service::getAlgorithm).filter(e -> e.startsWith("PBE")).filter(e -> !e.contains("Hmac")).toArray(String[]::new);
 
-		list_alg = new Algoritmo[alg_str_list.length];
-
+		list_PBE_alg = new Algoritmo[alg_str_list.length];
 		for (int i = 0; i < alg_str_list.length; i++) {
 			String str = alg_str_list[i];
-			list_alg[i] = new Algoritmo(str, str.replace("With", " con ").replace("And", " & ").replaceFirst("_(.*)", " $1 bits"));
+			list_PBE_alg[i] = new Algoritmo(str, str.replace("With", " con ").replace("And", " & ").replaceFirst("_(.*)", " $1 bits"));
 		}
 
+		list_PKEY_alg = new Algoritmo[Options.publicAlgorithms.length];
+		for (int i = 0; i < list_PKEY_alg.length; i++) {
+			String str = Options.publicAlgorithms[i];
+			list_PKEY_alg[i] = new Algoritmo(str, str.replaceFirst("/", " con ").replaceFirst("/", " & ").replaceFirst("_(.*)", " $1 bits"));
+		}
+
+		list_alg = new Algoritmo[list_PBE_alg.length + list_PKEY_alg.length];
+		// rellenar la lista de algoritmos
+		int i = 0;
+		for (Algoritmo a : list_PBE_alg) {
+			list_alg[i] = a;
+			i++;
+		}
+		for (Algoritmo a : list_PKEY_alg) {
+			list_alg[i] = a;
+			i++;
+		}
 		for (Algoritmo a : list_alg) {
 			alg_map.put(a.algorithm, a);
 		}
