@@ -23,7 +23,7 @@ class AlgoritmoTest {
 	 */
 	@Test
 	void getListOfAlgorithms() {
-		for (Algoritmo a : Algoritmo.getListOfAlgorithms()) {
+		for (Algoritmo a : Algoritmo.list_PBE_alg) {
 			assertDoesNotThrow(() -> {
 
 				PBEKeySpec pbeKeySpec = new PBEKeySpec("password".toCharArray());

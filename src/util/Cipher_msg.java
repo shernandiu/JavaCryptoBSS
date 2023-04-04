@@ -41,6 +41,9 @@ public class Cipher_msg {
 	protected SecretKey sKey;
 	protected PBEParameterSpec pPS;
 
+	//op to realizate
+	protected byte option = Options.OP_NONE;
+
 
 	/**
 	 * Constructor de la clase indicado para realizar la encriptación de un mensaje.
@@ -53,8 +56,10 @@ public class Cipher_msg {
 		this.is = is;
 		this.cypher_type = cypher_type;
 		this.password = password;
-		for (int i = 0; i < this.password.length; i++) {
-			this.password[i] &= 0x7F;
+		if (password != null) {
+			for (int i = 0; i < this.password.length; i++) {
+				this.password[i] &= 0x7F;
+			}
 		}
 		os = new ByteArrayOutputStream();
 	}
@@ -71,8 +76,10 @@ public class Cipher_msg {
 	public Cipher_msg(char[] password, InputStream is) {
 		this.is = is;
 		this.password = password;
-		for (int i = 0; i < this.password.length; i++) {
-			this.password[i] &= 0x7F;
+		if (password != null) {
+			for (int i = 0; i < this.password.length; i++) {
+				this.password[i] &= 0x7F;
+			}
 		}
 		os = new ByteArrayOutputStream();
 	}
@@ -86,7 +93,7 @@ public class Cipher_msg {
 	 * @throws InvalidKeySpecException  La contraseña no se acepta para el algoritmo en cuestión.
 	 * @throws NoSuchPaddingException   El algoritmo de relleno no está disponible
 	 */
-	private void generate_cypher() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
+	protected void generate_cypher() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
 		PBEKeySpec pbeKeySpec = new PBEKeySpec(password);
 		pPS = new PBEParameterSpec(salt, ITERATIONCOUNT);
 		SecretKeyFactory kf = SecretKeyFactory.getInstance(cypher_type.getAlgorithm());
@@ -107,7 +114,7 @@ public class Cipher_msg {
 	 * @throws InvalidAlgorithmParameterException Faltan parámetros en el algoritmo o son erróneos.
 	 * @throws InvalidKeyException                Especificaciones de la contraseña incorrecta.
 	 */
-	public void cipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException {
+	public void cipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		salt = generate_salt();
 
 		generate_cypher();
@@ -144,7 +151,7 @@ public class Cipher_msg {
 	 * @throws InvalidKeySpecException            La contraseña no se acepta para el algoritmo en cuestión.
 	 * @throws InvalidAlgorithmParameterException Faltan parámetros en el algoritmo o son erróneos.
 	 */
-	public void decipher() throws IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, PasswError {
+	public void decipher() throws IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, PasswError, IllegalBlockSizeException, BadPaddingException {
 		read_header();
 
 		generate_cypher();
@@ -178,7 +185,7 @@ public class Cipher_msg {
 	 */
 	void generate_header() {
 		try {
-			Header header = new Header(Options.OP_NONE, cypher_type.getAlgorithm(), null, salt);
+			Header header = new Header(option, cypher_type.getAlgorithm(), null, salt);
 			header.save(os);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -192,7 +199,7 @@ public class Cipher_msg {
 	 * @throws HeaderError              No se puede leer la cabecera o esta no es correcta.
 	 * @throws NoSuchAlgorithmException El algoritmo especificado en la cabecera no se puede usar para desencriptar.
 	 */
-	private void read_header() throws HeaderError, NoSuchAlgorithmException {
+	protected void read_header() throws HeaderError, NoSuchAlgorithmException {
 		try {
 			Header header = new Header();
 			if (!header.load(is))

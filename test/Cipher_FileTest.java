@@ -96,7 +96,7 @@ class Cipher_FileTest {
 	}
 
 	private static Stream<Algoritmo> getAlg() {
-		return Arrays.stream(Algoritmo.getListOfAlgorithms());
+		return Arrays.stream(Algoritmo.list_PBE_alg);
 	}
 
 	/**

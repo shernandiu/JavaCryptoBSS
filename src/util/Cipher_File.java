@@ -3,6 +3,8 @@ package util;
 import exceptions.HeaderError;
 import exceptions.PasswError;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
@@ -22,8 +24,8 @@ public class Cipher_File extends Cipher_msg {
 	public static final String ENCRYPTED_EXTENSION = "cif";     // Extensión de los ficheros encriptados
 	public static final String DECRYPTED_EXTENSION = "uncif";   // Extensión de los ficheros desencriptados
 
-	private final File file;        // Fichero de entrada
-	private File output_file;       // Fichero de salida
+	protected final File file;        // Fichero de entrada
+	protected File output_file;       // Fichero de salida
 
 	/**
 	 * Constructor de la clase para encriptar ficheros indicando el algoritmo a usar y la contraseña.
@@ -68,7 +70,7 @@ public class Cipher_File extends Cipher_msg {
 	 * @throws InvalidKeyException                La contraseña no posee un formato adecuado
 	 */
 	@Override
-	public void cipher() throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
+	public void cipher() throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 
@@ -96,7 +98,7 @@ public class Cipher_File extends Cipher_msg {
 	 * @throws InvalidKeyException                La contraseña no posee un formato adecuado
 	 */
 	@Override
-	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, PasswError {
+	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, PasswError, IllegalBlockSizeException, BadPaddingException {
 		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 		try {
