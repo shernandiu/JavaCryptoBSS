@@ -4,19 +4,21 @@ import util.Keys;
 import util.KeysStore;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
+import java.util.Vector;
 
 public class KeysWindow extends JDialog {
 	private JButton crearButton;
 	private JPanel mainPanel;
 	private JButton OKButton;
 	private JTable table1;
-	String[][] keys;
-	String[] names = {"Nombre de la clave", "Disponible"};
+	DefaultTableModel dtm;
 
-	public KeysWindow(Dialog owner) {
+	public KeysWindow(Frame owner) {
 		super(owner);
 		setLocationRelativeTo(owner);
 		setContentPane(mainPanel);
@@ -24,8 +26,10 @@ public class KeysWindow extends JDialog {
 		pack();
 
 		crearButton.addActionListener(e -> {
-			new KeysWindow(KeysWindow.this);
-
+			KeyCreationWindow kcw = new KeyCreationWindow(KeysWindow.this);
+			if (kcw.getGeneratedKeys() != null) {
+				updateTable(kcw.getGeneratedKeys());
+			}
 		});
 
 		// Seleccionar la modalidad
@@ -38,19 +42,32 @@ public class KeysWindow extends JDialog {
 	}
 
 	private void createUIComponents() throws FileAlreadyExistsException {
+		Vector<Vector<String>> keys = new Vector<>();
+		Vector<String> names = new Vector<>(List.of(new String[]{"Nombre de la clave", "Disponible"}));
+
 		List<Keys> key_list = KeysStore.getListOfKeys();
-		keys = new String[key_list.size()][2];
-		for (int i = 0; i < keys.length; i++) {
+		for (int i = 0; i < key_list.size(); i++) {
 			Keys k = key_list.get(i);
-			keys[i][0] = k.toString();
-			keys[i][1] = switch (k.privateAvaliable()) {
+			keys.add(new Vector<>());
+			keys.get(i).add(k.toString());
+			keys.get(i).add(switch (k.privateAvaliable()) {
 				case Keys.ON_CACHE -> "En caché";
 				case Keys.NOT_ENCRYPTED -> "Sin encriptar";
 				case Keys.NOT_AVALIABLE -> "Encriptada";
 				default -> throw new IllegalStateException("Unexpected value: " + k.privateAvaliable());
-			};
-
+			});
 		}
-		table1 = new JTable(keys, names);
+		dtm = new DefaultTableModel(keys, names);
+		table1 = new JTable(dtm);
+		dtm.fireTableDataChanged();
+	}
+
+	private void updateTable(Keys k) {
+		dtm.addRow(new String[]{k.toString(), switch (k.privateAvaliable()) {
+			case Keys.ON_CACHE -> "En caché";
+			case Keys.NOT_ENCRYPTED -> "Sin encriptar";
+			case Keys.NOT_AVALIABLE -> "Encriptada";
+			default -> throw new IllegalStateException("Unexpected value: " + k.privateAvaliable());
+		}});
 	}
 }

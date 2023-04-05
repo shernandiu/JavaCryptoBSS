@@ -38,6 +38,7 @@ public class KeyCreationWindow extends JDialog {
 	private JLabel seg;
 
 	private boolean encrypt;
+	private Keys generatedKeys = null;
 
 	private final ActionListener aceptar = e -> {
 		if (nombreTextField.getText().length() == 0) {
@@ -55,7 +56,7 @@ public class KeyCreationWindow extends JDialog {
 			}
 		}
 		try {
-			new Keys(nombreTextField.getText(), encrypt ? passwordField1.getPassword() : null);
+			generatedKeys = new Keys(nombreTextField.getText(), encrypt ? passwordField1.getPassword() : null);
 			JOptionPane.showMessageDialog(KeyCreationWindow.this, "Clave creada correctamente");
 			dispose();
 		} catch (FileAlreadyExistsException ex) {
@@ -68,7 +69,7 @@ public class KeyCreationWindow extends JDialog {
 
 	};
 
-	public KeyCreationWindow(Frame owner) {
+	public KeyCreationWindow(Dialog owner) {
 		super(owner);
 		setLocationRelativeTo(owner);
 		setContentPane(mainPanel);
@@ -112,5 +113,9 @@ public class KeyCreationWindow extends JDialog {
 
 	public static void main(String[] args) {
 		new KeyCreationWindow(null);
+	}
+
+	public Keys getGeneratedKeys() {
+		return generatedKeys;
 	}
 }
