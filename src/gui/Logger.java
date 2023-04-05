@@ -11,7 +11,7 @@ import java.awt.*;
  *
  * @author Santiago Hernández
  */
-class Logger {
+public class Logger {
 	private static final AttributeSet error_AS = new SimpleAttributeSet();  // Atributos de los errores
 	private static final AttributeSet text_AS = new SimpleAttributeSet();   // Atributos del texto normal
 	private static JTextPane log = null;
