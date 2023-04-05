@@ -1,4 +1,5 @@
-/out/
-/.idea/
+out/
+.idea/
+keypairs/
 *.cif
 *.uncif

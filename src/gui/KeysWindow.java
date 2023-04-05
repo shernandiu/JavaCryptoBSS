@@ -16,12 +16,18 @@ public class KeysWindow extends JDialog {
 	String[][] keys;
 	String[] names = {"Nombre de la clave", "Disponible"};
 
-	public KeysWindow(Frame owner) {
+	public KeysWindow(Dialog owner) {
 		super(owner);
 		setLocationRelativeTo(owner);
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
+
+		crearButton.addActionListener(e -> {
+			new KeysWindow(KeysWindow.this);
+
+		});
+
 		// Seleccionar la modalidad
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		setVisible(true);

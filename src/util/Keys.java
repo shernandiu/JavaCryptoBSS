@@ -49,9 +49,7 @@ public class Keys {
 		this.name = name;
 		this.size = DEFAULT_KEY_SIZE;
 		this.type = "RSA";
-		if (password != null) {
-			saveKeys(password);
-		}
+		saveKeys(password);
 		privateAvaliable = password == null;
 	}
 

@@ -51,11 +51,14 @@ public class Logger {
 	 * @param str String con el error
 	 */
 	public static void add_error(String str) {
-		try {
-			doc.insertString(doc.getLength(), str + "\n", error_AS);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
+		if (doc != null) {
+			try {
+				doc.insertString(doc.getLength(), str + "\n", error_AS);
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
 		}
+		System.out.println(str);
 	}
 
 	/**
