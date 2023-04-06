@@ -2,6 +2,7 @@ package gui;
 
 import util.Cipher_msg;
 import util.Keys;
+import util.KeysStore;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -57,6 +58,7 @@ public class KeyCreationWindow extends JDialog {
 		}
 		try {
 			generatedKeys = new Keys(nombreTextField.getText(), encrypt ? passwordField1.getPassword() : null);
+			KeysStore.update();
 			JOptionPane.showMessageDialog(KeyCreationWindow.this, "Clave creada correctamente");
 			dispose();
 		} catch (FileAlreadyExistsException ex) {

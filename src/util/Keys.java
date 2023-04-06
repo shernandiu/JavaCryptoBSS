@@ -1,17 +1,12 @@
 package util;
 
-import netscape.javascript.JSObject;
+import exceptions.HeaderError;
+import exceptions.PasswError;
 
 import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
-import javax.sound.sampled.AudioFormat;
-import java.beans.XMLEncoder;
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Path;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -39,6 +34,7 @@ public class Keys {
 	private byte[] prk_encrypted;
 	private Algoritmo encryp_type;
 	private boolean privateAvaliable;
+	private File file;
 
 	public Keys(String name, char[] password) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -51,15 +47,17 @@ public class Keys {
 		this.type = "RSA";
 		saveKeys(password);
 		privateAvaliable = password == null;
+		KeysStore.addKey(this);
 	}
 
 	public Keys(File f) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 		loadKeys(f);
+		file = f;
 	}
 
 	public void saveKeys(char[] password) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-		File f = new File(PATH + name + EXTENSION);
-		if (f.exists())
+		file = new File(PATH + name + EXTENSION);
+		if (file.exists())
 			throw new FileAlreadyExistsException(name + " exists");
 		// do not overwrite keys
 		StringBuilder output = new StringBuilder();
@@ -86,11 +84,11 @@ public class Keys {
 			output.append(strprk, i, Math.min(i + 40, strprk.length())).append("\n");
 		output.append("\n");
 
-		if (!f.getParentFile().exists())
-			f.getParentFile().mkdir();
-		f.createNewFile();
+		if (!file.getParentFile().exists())
+			file.getParentFile().mkdir();
+		file.createNewFile();
 
-		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8);
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
 		osw.write(String.format(output.toString()));
 		osw.close();
 	}
@@ -116,7 +114,7 @@ public class Keys {
 		splt = tmp.split(" *# *");
 		type = splt[0].trim();
 		m = Pattern.compile("(\\d+)").matcher(splt[1]);
-		System.out.println(m.find());
+		m.find();
 		size = Integer.parseInt(m.group(1));
 
 		// Encryption / type
@@ -158,9 +156,7 @@ public class Keys {
 		puk = kf.generatePublic(kp);
 
 		if (!encryp) {
-//			kf = KeyFactory.getInstance(type);
-			kp = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(prk_sb.toString()));
-			prk = kf.generatePrivate(kp);
+			setPRK(Base64.getDecoder().decode(prk_sb.toString().getBytes()));
 		} else {
 			prk_encrypted = Base64.getDecoder().decode(prk_sb.toString());
 		}
@@ -187,6 +183,26 @@ public class Keys {
 
 	public String toString() {
 		return name;
+	}
+
+	public boolean decipherKey(char[] password) throws InvalidAlgorithmParameterException, HeaderError, PasswError, NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, BadPaddingException, InvalidKeyException {
+		if (prk != null || prk_encrypted == null)
+			throw new InvalidParameterException("Key not encrypted");
+
+		Cipher_msg c = new Cipher_msg(password, new ByteArrayInputStream(prk_encrypted));
+		c.decipher();
+		setPRK(c.getText());
+		return prk != null;
+	}
+
+	private void setPRK(byte[] prk_sb) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		KeyFactory kf = KeyFactory.getInstance(type);
+		KeySpec kp = new PKCS8EncodedKeySpec(prk_sb);
+		prk = kf.generatePrivate(kp);
+	}
+
+	public File getFile() {
+		return file;
 	}
 
 	public static void main(String[] args) throws Exception {
