@@ -63,11 +63,11 @@ public class KeysWindow extends JDialog {
 	}
 
 	private void updateTable(Keys k) {
-		dtm.addRow(new String[]{k.toString(), switch (k.privateAvaliable()) {
+		dtm.addRow(new String[]{k.toString(), switch (k.privateAvailable()) {
 			case Keys.ON_CACHE -> "En caché";
 			case Keys.NOT_ENCRYPTED -> "Sin encriptar";
-			case Keys.NOT_AVALIABLE -> "Encriptada";
-			default -> throw new IllegalStateException("Unexpected value: " + k.privateAvaliable());
+			case Keys.NOT_AVAILABLE -> "Encriptada";
+			default -> throw new IllegalStateException("Unexpected value: " + k.privateAvailable());
 		}});
 	}
 }

@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class Keys {
 	public static final int NOT_ENCRYPTED = 0;
 	public static final int ON_CACHE = 1;
-	public static final int NOT_AVALIABLE = 2;
+	public static final int NOT_AVAILABLE = 2;
 
 	private static final int DEFAULT_KEY_SIZE = 512;
 	public static final String PATH = "./keypairs/";
@@ -176,9 +176,9 @@ public class Keys {
 		return prk;
 	}
 
-	public int privateAvaliable() {
+	public int privateAvailable() {
 		if (prk == null)
-			return NOT_AVALIABLE;
+			return NOT_AVAILABLE;
 		if (!privateAvaliable)
 			return ON_CACHE;
 		else
