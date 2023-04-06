@@ -78,19 +78,19 @@ public class MsgDecipherWindow extends JDialog {
 		}
 		// Manejo de excepciones
 		catch (IllegalArgumentException ex) {
-			Logger.add_error("Error: el texto no se corresponde con base64.");
+			Logger.add_error("Error: el texto no se corresponde con base64.", ex);
 		} catch (IOException ex) {
-			Logger.add_error("Error con la entrada y salida.");
+			Logger.add_error("Error con la entrada y salida.", ex);
 		} catch (PasswError ex) {
-			Logger.add_error("Error: Contraseña incorrecta, no puede descifrarse el mensaje.");
+			Logger.add_error("Error: Contraseña incorrecta, no puede descifrarse el mensaje.", ex);
 		} catch (InvalidKeyException ex) {
-			Logger.add_error("Error: La contraseña contiene caracteres extendidos.");
+			Logger.add_error("Error: La contraseña contiene caracteres extendidos.", ex);
 		} catch (HeaderError ex) {
-			Logger.add_error("Error: La cabecera del mensaje no es correcta.");
+			Logger.add_error("Error: La cabecera del mensaje no es correcta.", ex);
 		} catch (NoSuchAlgorithmException ex) {
-			Logger.add_error("Error: No se reconoce el algoritmo de encriptado.");
+			Logger.add_error("Error: No se reconoce el algoritmo de encriptado.", ex);
 		} catch (GeneralSecurityException ex) {
-			Logger.add_error("Error: En el desencriptado.");
+			Logger.add_error("Error: En el desencriptado.", ex);
 		}
 	};
 

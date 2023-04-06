@@ -64,7 +64,7 @@ public class ASym_Cipher_File extends Cipher_File {
 	}
 
 	@Override
-	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, PasswError, IllegalBlockSizeException, BadPaddingException {
+	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException {
 		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
 		os = new FileOutputStream(output_file);
 		try {
@@ -74,22 +74,19 @@ public class ASym_Cipher_File extends Cipher_File {
 
 			c.init(Cipher.DECRYPT_MODE, prk);
 
-			try {
-				byte[] buffer = new byte[64];
-				byte[] output_buffer;
-				int read;
-				while ((read = is.read(buffer)) >= 0) {
-					output_buffer = c.doFinal(buffer, 0, read);
-					os.write(output_buffer);
-					System.out.print(read + ":" + output_buffer.length + ", ");
-				}
-				System.out.println("\b\b.");
-			} catch (IOException ex) {
-				throw new PasswError(ex.getMessage());
-			} finally {
-				os.close();
-				is.close();
+
+			byte[] buffer = new byte[64];
+			byte[] output_buffer;
+			int read;
+			while ((read = is.read(buffer)) >= 0) {
+				output_buffer = c.doFinal(buffer, 0, read);
+				os.write(output_buffer);
+				System.out.print(read + ":" + output_buffer.length + ", ");
 			}
+			System.out.println("\b\b.");
+			os.close();
+			is.close();
+
 		} catch (Exception ex) {
 			os.close();
 			output_file.delete();

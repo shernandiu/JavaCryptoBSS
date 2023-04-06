@@ -61,6 +61,11 @@ public class Logger {
 		System.out.println(str);
 	}
 
+	public static void add_error(String str, Exception ex) {
+		add_error(str);
+		ex.printStackTrace();
+	}
+
 	/**
 	 * Limpia el contenido del log.
 	 */

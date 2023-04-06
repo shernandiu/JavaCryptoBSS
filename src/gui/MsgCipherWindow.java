@@ -73,13 +73,13 @@ public class MsgCipherWindow extends JDialog {
 			// cambiar el texto de salida según base64 o ascii
 			output_text.setText(base64RadioButton.isSelected() ? Base64.getEncoder().encodeToString(ciphed_text) : new String(ciphed_text, StandardCharsets.ISO_8859_1));
 		} catch (IOException ex) {
-			Logger.add_error("Error con la entrada y salida.");
+			Logger.add_error("Error con la entrada y salida.", ex);
 		} catch (NoSuchAlgorithmException ex) {
-			Logger.add_error("Error: No se reconoce el algoritmo de cifrado.");
+			Logger.add_error("Error: No se reconoce el algoritmo de cifrado.", ex);
 		} catch (InvalidKeyException ex) {
-			Logger.add_error("Error: La contraseña contiene caracteres extendidos.");
+			Logger.add_error("Error: La contraseña contiene caracteres extendidos.", ex);
 		} catch (GeneralSecurityException ex) {
-			Logger.add_error("Error con el cifrado.");
+			Logger.add_error("Error con el cifrado.", ex);
 		}
 	};
 

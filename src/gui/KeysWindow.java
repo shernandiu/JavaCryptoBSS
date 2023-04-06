@@ -6,6 +6,9 @@ import util.KeysStore;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Vector;
@@ -18,6 +21,16 @@ public class KeysWindow extends JDialog {
 	private JTextField selectedk;
 	DefaultTableModel dtm;
 	private Keys selectedKey;
+	private Keys finalSelectedKey = null;
+
+	private void accept() {
+		if (selectedKey == null) {
+			JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna clave.");
+			return;
+		}
+		finalSelectedKey = selectedKey;
+		dispose();
+	}
 
 	public KeysWindow(Frame owner, boolean privateNeeded) {
 		super(owner);
@@ -33,21 +46,45 @@ public class KeysWindow extends JDialog {
 			}
 		});
 
-		table1.getSelectionModel().addListSelectionListener(e -> {
-			int selectedRow = table1.getSelectedRow();
-			if (selectedRow < 0 || selectedRow > table1.getRowCount())
-				return;
-			selectedKey = KeysStore.get((String) dtm.getDataVector().get(selectedRow).get(0));
-			if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE && privateNeeded) {
-				new KeyDecipWindow(KeysWindow.this, selectedKey);
-				if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE)
-					selectedKey = null;   // delete if not available
-				else
+		table1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+//				System.out.println(e.getClickCount());
+				int selectedRow = table1.getSelectedRow();
+				if (selectedRow < 0 || selectedRow > table1.getRowCount())
+					return;
+				selectedKey = KeysStore.get((String) dtm.getDataVector().get(selectedRow).get(0));
+				if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE && privateNeeded) {
+					new KeyDecipWindow(KeysWindow.this, selectedKey);
+					if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE)
+						selectedKey = null;   // delete if not available
+					else
 //					updateTable();
-					updateRow(selectedRow);
+						updateRow(selectedRow);
+				}
+				selectedk.setText(selectedKey == null ? "" : selectedKey.toString());
+				if (e.getClickCount() >= 2 && selectedKey != null)
+					accept();
 			}
-			selectedk.setText(selectedKey == null ? "" : selectedKey.toString());
 		});
+
+//		table1.getSelectionModel().addListSelectionListener(e -> {
+//			int selectedRow = table1.getSelectedRow();
+//			if (selectedRow < 0 || selectedRow > table1.getRowCount())
+//				return;
+//			selectedKey = KeysStore.get((String) dtm.getDataVector().get(selectedRow).get(0));
+//			if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE && privateNeeded) {
+//				new KeyDecipWindow(KeysWindow.this, selectedKey);
+//				if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE)
+//					selectedKey = null;   // delete if not available
+//				else
+////					updateTable();
+//					updateRow(selectedRow);
+//			}
+//			selectedk.setText(selectedKey == null ? "" : selectedKey.toString());
+//		});
+
+		OKButton.addActionListener(e -> accept());
 
 		// Seleccionar la modalidad
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
@@ -111,5 +148,9 @@ public class KeysWindow extends JDialog {
 			case Keys.NOT_AVAILABLE -> "Encriptada";
 			default -> throw new IllegalStateException("Unexpected value: " + selectedKey.privateAvailable());
 		});
+	}
+
+	public Keys getSelectedKey() {
+		return finalSelectedKey;
 	}
 }

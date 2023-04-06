@@ -3,9 +3,9 @@ package gui;
 import exceptions.HeaderError;
 import exceptions.PasswError;
 import gui.util.SeparatorComboBox;
-import util.Algoritmo;
-import util.Cipher_File;
+import util.*;
 
+import javax.crypto.BadPaddingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -46,6 +46,9 @@ public class GUIMainWindow extends JFrame {
 	// Contraseña especificada para los cifrados de fichero
 	private char[] password = null;
 
+	// Forma de descifrar el fichero (PBE, C publica, Firma)
+	private int decipType;
+
 	/**
 	 * Acción al pulsar el botón de abrir fichero.
 	 * <p>
@@ -61,9 +64,26 @@ public class GUIMainWindow extends JFrame {
 			file_route.setText(jfc.getSelectedFile().getPath());
 			file = jfc.getSelectedFile();
 			Logger.add_text("Fichero seleccionado: " + jfc.getSelectedFile().getAbsolutePath());
-		} else if (file == null)
+			checkFile();
+		} else if (file == null) {
+			descifrarButton.setEnabled(false);
 			Logger.add_error("No se ha seleccionado archivo");
+		}
 	};
+
+	void checkFile() {
+		try {
+			switch (decipType = AlgType.getType(file)) {
+				case Algoritmo.PBE, Algoritmo.PKEY -> descifrarButton.setText("Descifrar");
+				case Algoritmo.SIGN -> descifrarButton.setText("Comprobar Firma");
+				case -1 -> descifrarButton.setText("Descifrar/Cmp Firma");
+			}
+		} catch (Exception ex) {
+			Logger.add_error("Error con el fichero seleccionado");
+		}
+		descifrarButton.setEnabled(true);
+	}
+
 	/**
 	 * Acción al escribir sobre el cuadro con la ruta del fichero.
 	 * <p>
@@ -74,8 +94,10 @@ public class GUIMainWindow extends JFrame {
 		if (!file.isFile()) {
 			Logger.add_error("Error: " + file_route.getText() + " no es un fichero.");
 			file = null;
+			descifrarButton.setEnabled(false);
 		} else {
 			Logger.add_text("Fichero seleccionado: " + file.getAbsolutePath());
+			checkFile();
 		}
 	};
 	/**
@@ -103,7 +125,17 @@ public class GUIMainWindow extends JFrame {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
 			return;
 		}
+		switch (algoritmo.getType()) {
+			case Algoritmo.PBE -> cipherPBE();
+			case Algoritmo.PKEY -> cipherPKEY();
+			case Algoritmo.SIGN -> cipherSIGN();
+		}
+		file_route.setText("Fichero: ");
+		file = null;
+		descifrarButton.setEnabled(false);
+	};
 
+	private void cipherPBE() {
 		FileEncWindow ps = new FileEncWindow(this);
 
 		if (ps.getPassword() != null) {
@@ -122,11 +154,38 @@ public class GUIMainWindow extends JFrame {
 			} catch (GeneralSecurityException ex) {
 				Logger.add_error("Error con el cifrado.");
 			}
-
-			file_route.setText("Fichero: ");
-			file = null;
 		}
-	};
+	}
+
+	private void cipherPKEY() {
+		KeysWindow ps = new KeysWindow(this, false);
+
+		Keys key = ps.getSelectedKey();
+
+		if (key == null) return;
+
+		ASym_Cipher_File c;
+		try {
+			c = new ASym_Cipher_File(file, algoritmo, key.getPuk());
+			c.cipher();
+			Logger.add_text("Fichero encriptado con la clave publica: " + key);
+			Logger.add_text("Fichero encriptado en: " + c.getOutput_file());
+		} catch (FileNotFoundException ex) {
+			Logger.add_error("Error: no se puede acceder al fichero o ha sido eliminado.");
+		} catch (IOException ex) {
+			Logger.add_error("Error al cifrar archivo.");
+		} catch (NoSuchAlgorithmException ex) {
+			Logger.add_error("Error: El algoritmo no se reconoce.");
+		} catch (GeneralSecurityException ex) {
+			Logger.add_error("Error con el cifrado.");
+		}
+
+	}
+
+	private void cipherSIGN() {
+
+	}
+
 	/**
 	 * Acción al pulsar el botón de encriptar fichero
 	 * <p>
@@ -137,6 +196,18 @@ public class GUIMainWindow extends JFrame {
 			Logger.add_error("Error, no se ha seleccionado archivo.");
 			return;
 		}
+		switch (decipType) {
+			case Algoritmo.PBE -> decipPBE();
+			case Algoritmo.PKEY -> decipPKEY();
+			case Algoritmo.SIGN -> decipSIGN();
+			default -> Logger.add_error("No se reconoce ningún tipo de cifrado o firma para el fichero seleccionado.");
+		}
+		file_route.setText("Fichero: ");
+		file = null;
+		descifrarButton.setEnabled(false);
+	};
+
+	private void decipPBE() {
 		FileDecripWindow ps = new FileDecripWindow(GUIMainWindow.this);
 
 		if (ps.getPassword() != null) {
@@ -147,30 +218,50 @@ public class GUIMainWindow extends JFrame {
 				Logger.add_text("Desencriptado con " + c.getCypher_type());
 				Logger.add_text("Fichero descifrado en: " + c.getOutput_file());
 			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error: Fichero no encontrado.");
+				Logger.add_error("Error: Fichero no encontrado.", ex);
 			} catch (HeaderError ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error: No se puede leer la cabecera.");
+				Logger.add_error("Error: No se puede leer la cabecera.", ex);
 			} catch (PasswError ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error: Contraseña incorrecta, no puede descifrarse el fichero.");
+				Logger.add_error("Error: Contraseña incorrecta, no puede descifrarse el fichero.", ex);
 			} catch (IOException ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error con la entrada/salida.");
+				Logger.add_error("Error con la entrada/salida.", ex);
 			} catch (NoSuchAlgorithmException ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.");
+				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.", ex);
 			} catch (GeneralSecurityException ex) {
-				ex.printStackTrace();
-				Logger.add_error("Error al descifrar el fichero.");
+				Logger.add_error("Error al descifrar el fichero.", ex);
 			}
-
-
-			file_route.setText("Fichero: ");
-			file = null;
 		}
-	};
+	}
+
+	private void decipPKEY() {
+		KeysWindow kw = new KeysWindow(GUIMainWindow.this, true);
+		Keys key;
+		if ((key = kw.getSelectedKey()) != null) {
+			try {
+				ASym_Cipher_File acf = new ASym_Cipher_File(file, key.getPrk());
+				acf.decipher();
+				Logger.add_text("Desencriptado con " + acf.getCypher_type());
+				Logger.add_text("Fichero descifrado en: " + acf.getOutput_file());
+			} catch (FileNotFoundException ex) {
+				Logger.add_error("Error: Fichero no encontrado.", ex);
+			} catch (HeaderError ex) {
+				Logger.add_error("Error: No se puede leer la cabecera.", ex);
+			} catch (IOException ex) {
+				Logger.add_error("Error con la entrada/salida.", ex);
+			} catch (BadPaddingException ex) {
+				Logger.add_error("La clave usada no se corresponde con la clave de cifrado.");
+			} catch (NoSuchAlgorithmException ex) {
+				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.", ex);
+			} catch (GeneralSecurityException ex) {
+				Logger.add_error("Error al descifrar el fichero.", ex);
+			}
+		}
+	}
+
+	private void decipSIGN() {
+
+	}
+
 	/**
 	 * Acción al seleccionar y deseleccionar el cuadro con la ruta del fichero.
 	 * <p>

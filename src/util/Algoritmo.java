@@ -16,9 +16,9 @@ import java.util.Optional;
  * @author Santiago Hernández
  */
 public class Algoritmo {
-	private static final int PBE = 0;
-	private static final int PKEY = 1;
-	private static final int SIGN = 2;
+	public static final int PBE = 0;
+	public static final int PKEY = 1;
+	public static final int SIGN = 2;
 
 	public static final Algoritmo[] list_alg;                              //lista con todos los algoritmos disponibles
 	public static final Algoritmo[] list_PBE_alg;                          //lista con todos los algoritmos de PBE disponibles
@@ -113,6 +113,16 @@ public class Algoritmo {
 	@Override
 	public String toString() {
 		return common_name;
+	}
+
+	/**
+	 * Devuelve el tipo de algoritmo según sea PBE, de encriptado de clave pública
+	 * o firma digital
+	 *
+	 * @return {@link Algoritmo#PBE},{@link Algoritmo#PKEY},{@link Algoritmo#SIGN},
+	 */
+	public int getType() {
+		return type;
 	}
 
 
