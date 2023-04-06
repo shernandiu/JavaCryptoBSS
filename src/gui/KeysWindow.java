@@ -19,7 +19,7 @@ public class KeysWindow extends JDialog {
 	DefaultTableModel dtm;
 	private Keys selectedKey;
 
-	public KeysWindow(Frame owner) {
+	public KeysWindow(Frame owner, boolean privateNeeded) {
 		super(owner);
 		setLocationRelativeTo(owner);
 		setContentPane(mainPanel);
@@ -38,21 +38,13 @@ public class KeysWindow extends JDialog {
 			if (selectedRow < 0 || selectedRow > table1.getRowCount())
 				return;
 			selectedKey = KeysStore.get((String) dtm.getDataVector().get(selectedRow).get(0));
-			if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE) {
+			if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE && privateNeeded) {
 				new KeyDecipWindow(KeysWindow.this, selectedKey);
 				if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE)
 					selectedKey = null;   // delete if not available
 				else
 //					updateTable();
-				{
-					dtm.getDataVector().get(selectedRow).set(1, switch (selectedKey.privateAvailable()) {
-						case Keys.ON_CACHE -> "En caché";
-						case Keys.NOT_ENCRYPTED -> "Sin encriptar";
-						case Keys.NOT_AVAILABLE -> "Encriptada";
-						default ->
-								throw new IllegalStateException("Unexpected value: " + selectedKey.privateAvailable());
-					});
-				}
+					updateRow(selectedRow);
 			}
 			selectedk.setText(selectedKey == null ? "" : selectedKey.toString());
 		});
@@ -63,7 +55,7 @@ public class KeysWindow extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		new KeysWindow(null);
+		new KeysWindow(null, true);
 	}
 
 	private void createUIComponents() throws FileAlreadyExistsException {
@@ -109,5 +101,15 @@ public class KeysWindow extends JDialog {
 		} catch (FileAlreadyExistsException e) {
 			Logger.add_error("Existe un fichero con el nombre de: " + Keys.PATH);
 		}
+	}
+
+	private void updateRow(int row) {
+		Vector<String> vrow = dtm.getDataVector().get(row);
+		vrow.set(1, switch (selectedKey.privateAvailable()) {
+			case Keys.ON_CACHE -> "En caché";
+			case Keys.NOT_ENCRYPTED -> "Sin encriptar";
+			case Keys.NOT_AVAILABLE -> "Encriptada";
+			default -> throw new IllegalStateException("Unexpected value: " + selectedKey.privateAvailable());
+		});
 	}
 }
