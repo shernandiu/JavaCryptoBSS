@@ -1,6 +1,5 @@
 package util;
 
-import byss.Header;
 import byss.Options;
 import exceptions.HeaderError;
 import exceptions.PasswError;
@@ -11,7 +10,6 @@ import javax.crypto.spec.PBEParameterSpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -26,24 +24,16 @@ import java.security.spec.InvalidKeySpecException;
  *
  * @author Santiago Hernández
  */
-public class Cipher_msg {
+public class Cipher_msg extends HeaderReader {
 	protected static final int ITERATIONCOUNT = 1_000;  // número de veces a iterar para obtener la clave
 	protected static final int SALT_DEFAULT_SIZE = 8;   // tamaño del salt a generar en bytes
 	protected static final int BUFFER_SIZE = 1024;      // tamaño del buffer para leer y escribir en los flujos de E/S
 
 
-	protected final InputStream is;
 	protected final char[] password;
-	protected OutputStream os;
-	protected Algoritmo cypher_type;
-	protected byte[] salt = null;
 	protected Cipher c;
 	protected SecretKey sKey;
 	protected PBEParameterSpec pPS;
-
-	//op to realizate
-	protected byte option = Options.OP_NONE;
-
 
 	/**
 	 * Constructor de la clase indicado para realizar la encriptación de un mensaje.
@@ -62,6 +52,7 @@ public class Cipher_msg {
 			}
 		}
 		os = new ByteArrayOutputStream();
+		option = Options.OP_SYMMETRIC_CIPHER;
 	}
 
 	/**
@@ -82,6 +73,7 @@ public class Cipher_msg {
 			}
 		}
 		os = new ByteArrayOutputStream();
+		option = Options.OP_SYMMETRIC_CIPHER;
 	}
 
 	/**
@@ -95,7 +87,7 @@ public class Cipher_msg {
 	 */
 	protected void generate_cypher() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
 		PBEKeySpec pbeKeySpec = new PBEKeySpec(password);
-		pPS = new PBEParameterSpec(salt, ITERATIONCOUNT);
+		pPS = new PBEParameterSpec(data, ITERATIONCOUNT);
 		SecretKeyFactory kf = SecretKeyFactory.getInstance(cypher_type.getAlgorithm());
 		sKey = kf.generateSecret(pbeKeySpec);
 
@@ -115,7 +107,7 @@ public class Cipher_msg {
 	 * @throws InvalidKeyException                Especificaciones de la contraseña incorrecta.
 	 */
 	public void cipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-		salt = generate_salt();
+		data = generate_salt();
 
 		generate_cypher();
 
@@ -178,40 +170,6 @@ public class Cipher_msg {
 		return salt;
 	}
 
-
-	/**
-	 * Genera la cabecera del mensaje con la información necesaria para poder obtener posteriormente los parámetros
-	 * necesarios para desencriptar.
-	 */
-	void generate_header() {
-		try {
-			Header header = new Header(option, cypher_type.getAlgorithm(), null, salt);
-			header.save(os);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	/**
-	 * Lee los parámetros de la cabecera del mensaje necesarios para configurar los métodos para desencriptar y los guarda
-	 * como atributos del objeto {@link Cipher_msg}.
-	 *
-	 * @throws HeaderError              No se puede leer la cabecera o esta no es correcta.
-	 * @throws NoSuchAlgorithmException El algoritmo especificado en la cabecera no se puede usar para desencriptar.
-	 */
-	protected void read_header() throws HeaderError, NoSuchAlgorithmException {
-		try {
-			Header header = new Header();
-			if (!header.load(is))
-				throw new HeaderError("Cant read header");
-			salt = header.getData();
-			cypher_type = Algoritmo.get(header.getAlgorithm1());
-		} catch (NoSuchAlgorithmException ex) {
-			throw ex;
-		} catch (Exception ex) {
-			throw new HeaderError(ex.getMessage());
-		}
-	}
 
 	/**
 	 * Lee el buffer de salida con el mensaje cifrado resultante de haber cifrado o el texto en claro tras haber

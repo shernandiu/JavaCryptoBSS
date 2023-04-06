@@ -80,7 +80,7 @@ class Cipher_FileTest {
 	 * @throws IOException              Error al leer el fichero
 	 * @throws NoSuchAlgorithmException La máquina virtual no dispone del algoritmo SHA-256 ni MD4
 	 */
-	byte[] checksum(File f) throws IOException, NoSuchAlgorithmException {
+	static byte[] checksum(File f) throws IOException, NoSuchAlgorithmException {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("SHA-256");
@@ -88,7 +88,7 @@ class Cipher_FileTest {
 			md = MessageDigest.getInstance("MD4");
 		}
 		DigestInputStream dis = new DigestInputStream(new FileInputStream(f), md);
-		byte[] buffer = new byte[1024 * 8];
+		byte[] buffer = new byte[1024];
 		while (dis.read(buffer) != -1) {
 		}
 		dis.close();

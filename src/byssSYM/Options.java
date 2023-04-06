@@ -91,8 +91,11 @@ public class Options implements Serializable {
 	/**
 	 * Nombres estandares de algoritmos de firma digital
 	 */
-	public final static String signAlgorithms[] = {"none", "SHA1withRSA", "MD2withRSA", "MD5withRSA",
-			"SHA224withRSA", "SHA256withRSA", "SHA384withRSA", "SHA512withRSA"};
+//	public final static String signAlgorithms[] = {"SHA1withRSA", "MD2withRSA", "MD5withRSA",
+//			"SHA224withRSA", "SHA256withRSA", "SHA384withRSA", "SHA512withRSA"};
+	// SHA384withRSA y SHA512withRSA no son compatibles con claves de 512
+	public final static String signAlgorithms[] = {"SHA1withRSA", "MD2withRSA", "MD5withRSA",
+			"SHA224withRSA", "SHA256withRSA"};
 
 	/**
 	 * Nombres estandares de algoritmos de cifrado simetrico y publico

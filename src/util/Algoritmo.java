@@ -23,6 +23,7 @@ public class Algoritmo {
 	public static final Algoritmo[] list_alg;                              //lista con todos los algoritmos disponibles
 	public static final Algoritmo[] list_PBE_alg;                          //lista con todos los algoritmos de PBE disponibles
 	public static final Algoritmo[] list_PKEY_alg;                         //lista con todos los algoritmos de clave pública disponibles
+	public static final Algoritmo[] list_SIGN_alg;                         //lista con todos los algoritmos de clave pública disponibles
 	public static final Map<String, Algoritmo> alg_map = new HashMap<>();  // diccionario con el par nombre->algoritmo
 
 	static {
@@ -46,7 +47,14 @@ public class Algoritmo {
 			list_PKEY_alg[i] = new Algoritmo(str, str.replaceFirst("/", " con ").replaceFirst("/", " & ").replaceFirst("_(.*)", " $1 bits"), PKEY);
 		}
 
-		list_alg = new Algoritmo[list_PBE_alg.length + list_PKEY_alg.length];
+		// algoritmos firma
+		list_SIGN_alg = new Algoritmo[Options.signAlgorithms.length];
+		for (int i = 0; i < list_SIGN_alg.length; i++) {
+			String str = Options.signAlgorithms[i];
+			list_SIGN_alg[i] = new Algoritmo(str, str.replaceFirst("/", " con ").replaceFirst("/", " & ").replaceFirst("_(.*)", " $1 bits"), PKEY);
+		}
+
+		list_alg = new Algoritmo[list_PBE_alg.length + list_PKEY_alg.length + list_SIGN_alg.length];
 		// rellenar la lista de algoritmos
 		int i = 0;
 		for (Algoritmo a : list_PBE_alg) {
@@ -57,6 +65,11 @@ public class Algoritmo {
 			list_alg[i] = a;
 			i++;
 		}
+		for (Algoritmo a : list_SIGN_alg) {
+			list_alg[i] = a;
+			i++;
+		}
+
 		for (Algoritmo a : list_alg) {
 			alg_map.put(a.algorithm, a);
 		}

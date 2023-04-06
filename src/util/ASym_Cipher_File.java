@@ -2,30 +2,29 @@ package util;
 
 import byss.Options;
 import exceptions.HeaderError;
-import exceptions.PasswError;
 
 import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import java.io.*;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
 public class ASym_Cipher_File extends Cipher_File {
 
-	protected byte operation = Options.OP_PUBLIC_CIPHER;
 	private PublicKey puk;
 	private PrivateKey prk;
+
 
 	public ASym_Cipher_File(File file, Algoritmo cypher_type, PublicKey puk) throws FileNotFoundException {
 		super(file, cypher_type, null);
 		this.puk = puk;
-		salt = new byte[0];
+		data = new byte[0];
+		option = Options.OP_PUBLIC_CIPHER;
 	}
 
 	public ASym_Cipher_File(File file, PrivateKey prk) throws FileNotFoundException {
 		super(file, null);
 		this.prk = prk;
+		option = Options.OP_PUBLIC_CIPHER;
 	}
 
 	@Override
