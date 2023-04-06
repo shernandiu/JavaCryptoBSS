@@ -51,7 +51,7 @@ public class Algoritmo {
 		list_SIGN_alg = new Algoritmo[Options.signAlgorithms.length];
 		for (int i = 0; i < list_SIGN_alg.length; i++) {
 			String str = Options.signAlgorithms[i];
-			list_SIGN_alg[i] = new Algoritmo(str, str.replaceFirst("/", " con ").replaceFirst("/", " & ").replaceFirst("_(.*)", " $1 bits"), PKEY);
+			list_SIGN_alg[i] = new Algoritmo(str, str.replaceFirst("/", " con ").replaceFirst("/", " & ").replaceFirst("_(.*)", " $1 bits"), SIGN);
 		}
 
 		list_alg = new Algoritmo[list_PBE_alg.length + list_PKEY_alg.length + list_SIGN_alg.length];

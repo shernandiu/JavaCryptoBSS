@@ -95,4 +95,8 @@ public class Signer extends HeaderReader {
 		os.close();
 		return outFile;
 	}
+
+	public Algoritmo getSignAlg() {
+		return cypher_type;
+	}
 }

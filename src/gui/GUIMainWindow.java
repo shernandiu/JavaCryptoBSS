@@ -3,6 +3,7 @@ package gui;
 import exceptions.HeaderError;
 import exceptions.PasswError;
 import gui.util.SeparatorComboBox;
+import org.junit.platform.commons.function.Try;
 import util.*;
 
 import javax.crypto.BadPaddingException;
@@ -17,7 +18,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 
 /**
  * Ventana principal del programa.
@@ -41,7 +44,7 @@ public class GUIMainWindow extends JFrame {
 
 	// Algoritmo seleccionado
 	// Por defecto el primero de la lista
-	private Algoritmo algoritmo = Algoritmo.getListOfAlgorithms()[0];
+	private Algoritmo algoritmo;
 
 	// Contraseña especificada para los cifrados de fichero
 	private char[] password = null;
@@ -59,6 +62,7 @@ public class GUIMainWindow extends JFrame {
 	private final ActionListener open_file = e -> {
 		JFileChooser jfc = new JFileChooser();
 		jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros encriptados (.%s)", Cipher_File.ENCRYPTED_EXTENSION), Cipher_File.ENCRYPTED_EXTENSION));
+		jfc.addChoosableFileFilter(new FileNameExtensionFilter(String.format("Ficheros firmados (.%s)", Signer.EXTENSION_SIGN), Signer.EXTENSION_SIGN));
 		int returnVal = jfc.showOpenDialog(jfc);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			file_route.setText(jfc.getSelectedFile().getPath());
@@ -107,6 +111,12 @@ public class GUIMainWindow extends JFrame {
 	 */
 	private final ActionListener cipher_selection = e -> {
 		algoritmo = (util.Algoritmo) comboBox1.getSelectedItem();
+		assert algoritmo != null;
+		cifrarMensajeButton.setEnabled(algoritmo.getType() == Algoritmo.PBE);
+		if (algoritmo.getType() == Algoritmo.SIGN)
+			cifrarButton.setText("Firmar");
+		else
+			cifrarButton.setText("Cifrar");
 		Logger.add_text("Algoritmo seleccionado: " + algoritmo);
 	};
 	/**
@@ -179,11 +189,31 @@ public class GUIMainWindow extends JFrame {
 		} catch (GeneralSecurityException ex) {
 			Logger.add_error("Error con el cifrado.");
 		}
-
 	}
 
 	private void cipherSIGN() {
+		KeysWindow ps = new KeysWindow(this, true);
 
+		Keys key = ps.getSelectedKey();
+
+		if (key == null) return;
+
+		Signer s;
+
+		try {
+			s = new Signer(file, algoritmo);
+			s.sign(key.getPrk());
+			Logger.add_text("Fichero firmado con la clave: " + key);
+			Logger.add_text("Fichero firmado en: " + s.getOutputFile());
+		} catch (NoSuchAlgorithmException ex) {
+			Logger.add_error("No se puede firmar con ese algoritmo.", ex);
+		} catch (SignatureException ex) {
+			Logger.add_error("Error en la firma.", ex);
+		} catch (InvalidKeyException ex) {
+			Logger.add_error("La clave privada no es válida.", ex);
+		} catch (IOException ex) {
+			Logger.add_error("Error al leer o escribir el fichero.", ex);
+		}
 	}
 
 	/**
@@ -259,6 +289,38 @@ public class GUIMainWindow extends JFrame {
 	}
 
 	private void decipSIGN() {
+		KeysWindow kw = new KeysWindow(GUIMainWindow.this, false);
+		Keys key;
+		if ((key = kw.getSelectedKey()) == null)
+			return;
+
+		try {
+			Signer s = new Signer(file);
+			boolean signV = s.verify(key.getPuk());
+			Logger.add_text("Desencriptado con " + s.getSignAlg());
+			if (signV) {
+				Logger.add_good("Fima correcta.");
+				s.getOriginalFile();
+				Logger.add_text("Guardado fichero original en: " + s.getOutputFile());
+			} else {
+				Logger.add_error("Fima incorrecta.");
+				int option = JOptionPane.showOptionDialog(this, "Firma incorrecta\n¿Obtener el fichero original de todas formas?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+				if (option == JOptionPane.YES_OPTION) {
+					s.getOriginalFile();
+					Logger.add_text("Guardado fichero original en: " + s.getOutputFile());
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			Logger.add_error("Error: Fichero no encontrado.", ex);
+		} catch (HeaderError ex) {
+			Logger.add_error("Error: No se puede leer la cabecera.", ex);
+		} catch (IOException ex) {
+			Logger.add_error("Error con la entrada/salida.", ex);
+		} catch (NoSuchAlgorithmException ex) {
+			Logger.add_error("Error: No se reconoce el algoritmo de cifrado.", ex);
+		} catch (GeneralSecurityException ex) {
+			Logger.add_error("Error al descifrar el fichero.", ex);
+		}
 
 	}
 
@@ -309,13 +371,20 @@ public class GUIMainWindow extends JFrame {
 		// Inicializar el log
 		Logger.setLog(Log);
 
-		// Insertar los algoritmos disponibles en el desplegable.
 		comboBox1.setRenderer(lcr);
-		for (Algoritmo a : Algoritmo.list_PBE_alg)
-			comboBox1.addItem(a);
-		comboBox1.addItem(null);
+		// Insertar los algoritmos disponibles en el desplegable.
 		for (Algoritmo a : Algoritmo.list_PKEY_alg)
 			comboBox1.addItem(a);
+		comboBox1.addItem(null);
+		for (Algoritmo a : Algoritmo.list_SIGN_alg)
+			comboBox1.addItem(a);
+		comboBox1.addItem(null);
+		for (Algoritmo a : Algoritmo.list_PBE_alg)
+			comboBox1.addItem(a);
+
+		algoritmo = (Algoritmo) comboBox1.getSelectedItem();
+		// bloquear el boton de cifrar mensaje si el algoritmo no es un PBE
+		cifrarMensajeButton.setEnabled(algoritmo.getType() == Algoritmo.PBE);
 
 		// Añadir los listeners a los botones
 		abrirButton.addActionListener(open_file);

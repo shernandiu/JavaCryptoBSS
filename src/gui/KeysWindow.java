@@ -25,7 +25,7 @@ public class KeysWindow extends JDialog {
 
 	private void accept() {
 		if (selectedKey == null) {
-			JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna clave.");
+			JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna clave.", null, JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		finalSelectedKey = selectedKey;

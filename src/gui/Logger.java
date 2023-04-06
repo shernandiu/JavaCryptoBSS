@@ -14,12 +14,14 @@ import java.awt.*;
 public class Logger {
 	private static final AttributeSet error_AS = new SimpleAttributeSet();  // Atributos de los errores
 	private static final AttributeSet text_AS = new SimpleAttributeSet();   // Atributos del texto normal
+	private static final AttributeSet good_AS = new SimpleAttributeSet();   // Atributos del texto normal
 	private static JTextPane log = null;
 	private static Document doc = null;
 
 	static {
 		StyleConstants.setForeground((MutableAttributeSet) text_AS, Color.BLACK);
 		StyleConstants.setForeground((MutableAttributeSet) error_AS, Color.RED);
+		StyleConstants.setForeground((MutableAttributeSet) good_AS, Color.GREEN);
 	}
 
 	/**
@@ -54,6 +56,22 @@ public class Logger {
 		if (doc != null) {
 			try {
 				doc.insertString(doc.getLength(), str + "\n", error_AS);
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(str);
+	}
+
+	/**
+	 * Añade un mensaje de correcto al log.
+	 *
+	 * @param str String con el mensaje
+	 */
+	public static void add_good(String str) {
+		if (doc != null) {
+			try {
+				doc.insertString(doc.getLength(), str + "\n", good_AS);
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
