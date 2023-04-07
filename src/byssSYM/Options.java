@@ -54,39 +54,39 @@ public class Options implements Serializable {
 	/**
 	 * Nombres de algoritmos de cifrado sim?trico PBE
 	 */
-	public final static String PBEAlgorithms[] = {"none", "PBEWithMD5AndDES", "PBEWithMD5AndTripleDES",
+	public final static String[] PBEAlgorithms = {"none", "PBEWithMD5AndDES", "PBEWithMD5AndTripleDES",
 			"PBEWithSHA1AndDESede", "PBEWithSHA1AndRC2_40"};
 	/**
 	 * Nombres de algoritmos de cifrado sim?trico, para generaci?n de claves:
 	 */
-	public final static String KeyAlgorithms[] = {"AES", "ARCFOUR", "DESede"};
+	public final static String[] KeyAlgorithms = {"AES", "ARCFOUR", "DESede"};
 	/**
 	 * Nombres compuestos de algoritmos para cifrado sim?trico, incluyendo Modo de
 	 * operaci?pn y Modo de Relleno:
 	 * Algoritmo/ModoOperacion/ModoRelleno
 	 */
-	public final static String SymmetrcialAlgorithms[] = {"none", "AES/ECB/PKCS5PADDING", "AES/CBC/PKCS5PADDING",
+	public final static String[] SymmetrcialAlgorithms = {"none", "AES/ECB/PKCS5PADDING", "AES/CBC/PKCS5PADDING",
 			"ARCFOUR/ECB/NOPADDING", "DESede/CBC/PKCS5PADDING"};
 	/**
 	 * Rangos de tama?os de claves soportados para cada algoritmo
 	 */
-	public final static String algorithmSizeKey[] = {"AES", "128", "256",
+	public final static String[] algorithmSizeKey = {"AES", "128", "256",
 			"ARCFOUR", "40", "1024",
 			"DESede", "112", "168"};
 	/**
 	 * Nombres de algoritmos para cifrado sim?trico de claves
 	 */
-	public final static String KeyWrapAlgorithms[] = {"PBEWithMD5AndDES"};
+	public final static String[] KeyWrapAlgorithms = {"PBEWithMD5AndDES"};
 
 	/**
 	 * Nombres estandares de algoritmos de cifrado publico
 	 */
 //	public final static String publicAlgorithms[] = {"none", "RSA/ECB/PKCS1Padding"};
-	public final static String publicAlgorithms[] = {"RSA/ECB/PKCS1Padding"};
+	public final static String[] publicAlgorithms = {"RSA/ECB/PKCS1Padding"};
 	/**
 	 * Nombres estandares de algoritmos de autenticacion hash y MAC
 	 */
-	public final static String hashmacAlgorithms[] = {"none", "MD2", "MD5", "SHA-1", "SHA-256", "SHA-384", "SHA-512",
+	public final static String[] hashmacAlgorithms = {"none", "MD2", "MD5", "SHA-1", "SHA-256", "SHA-384", "SHA-512",
 			"HmacMD5", "HmacSHA1", "HmacSHA256", "HmacSHA384", "HmacSHA512"};
 	/**
 	 * Nombres estandares de algoritmos de firma digital
@@ -94,18 +94,18 @@ public class Options implements Serializable {
 //	public final static String signAlgorithms[] = {"SHA1withRSA", "MD2withRSA", "MD5withRSA",
 //			"SHA224withRSA", "SHA256withRSA", "SHA384withRSA", "SHA512withRSA"};
 	// SHA384withRSA y SHA512withRSA no son compatibles con claves de 512
-	public final static String signAlgorithms[] = {"SHA1withRSA", "MD2withRSA", "MD5withRSA",
+	public final static String[] signAlgorithms = {"SHA1withRSA", "MD2withRSA", "MD5withRSA",
 			"SHA224withRSA", "SHA256withRSA"};
 
 	/**
 	 * Nombres estandares de algoritmos de cifrado simetrico y publico
 	 */
-	public final static String cipherAlgorithms[] = {"none", "PBEWithMD5AndDES", "PBEWithMD5AndTripleDES",
+	public final static String[] cipherAlgorithms = {"none", "PBEWithMD5AndDES", "PBEWithMD5AndTripleDES",
 			"PBEWithSHA1AndDESede", "PBEWithSHA1AndRC2_40", "RSA/ECB/PKCS1Padding"};
 	/**
 	 * Nombres estandares de algoritmos de autenticacion hash, mac y firma digital
 	 */
-	public final static String authenticationAlgorithms[] = {"none", "MD2", "MD5", "SHA-1", "SHA-256", "SHA-384",
+	public final static String[] authenticationAlgorithms = {"none", "MD2", "MD5", "SHA-1", "SHA-256", "SHA-384",
 			"SHA-512", "HmacMD5", "HmacSHA1", "HmacSHA256", "HmacSHA384", "HmacSHA512", "SHA1withRSA", "MD2withRSA",
 			"MD5withRSA", "SHA224withRSA", "SHA256withRSA", "SHA384withRSA", "SHA512withRSA"};
 
@@ -247,7 +247,7 @@ public class Options implements Serializable {
 	 * @return posicion de <code>item</code> en <code>stringList</code> si la
 	 * encuentra, -1 en caso contrario
 	 */
-	public static int search(String stringList[], String item) {
+	public static int search(String[] stringList, String item) {
 		int i;
 		for (i = stringList.length - 1; i != -1; i--)
 			if (stringList[i].compareTo(item) == 0)

@@ -23,7 +23,7 @@ import java.util.Arrays;
  * --------------------------------------------------------
  */
 public class Header extends BasicHeader {
-	private final static byte MARK[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+	private final static byte[] MARK = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 	private final static byte MARKLENGTH = 10;
 	private final static short MINHEADERLENGTH = MARKLENGTH + 4;
 
@@ -39,7 +39,7 @@ public class Header extends BasicHeader {
 	/**
 	 * Datos para las operaciones: salt / mac / hash / signature / ...
 	 */
-	private byte data[];
+	private byte[] data;
 
 	/**
 	 * Constructor por defecto.
@@ -159,21 +159,20 @@ public class Header extends BasicHeader {
 				System.out.println("Leído, Algoritmo2: " + fh2.getAlgorithm2());
 				System.out.print("Leído, Data     : ");
 				for (byte i = 0; i < fh2.getData().length; i++)
-					System.out.print(String.format("0x%h ", fh2.getData()[i]));
+					System.out.printf("0x%h ", fh2.getData()[i]);
 			} else
 				System.out.println("Error en la carga");
 			fis.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		;
 	}
 
 	/**
 	 * Programa principal para prueba
 	 */
-	public static void main(String args[]) {
-		byte data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	public static void main(String[] args) {
+		byte[] data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 		Header h = new Header(Options.OP_SYMMETRIC_CIPHER, Options.PBEAlgorithms[0], "", data);
 		h.test();
 	}

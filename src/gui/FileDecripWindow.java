@@ -2,6 +2,9 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * Ventana para escribir la contraseña para encriptar un fichero.
@@ -27,8 +30,11 @@ public class FileDecripWindow extends JDialog {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
 
+		// OK en enter      Cerrar en esc
+		getRootPane().setDefaultButton(OKButton);
+		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		// Añadir listeners
-		
+
 		// Cerrar al pulsar cancelar
 		cancelarButton.addActionListener(e -> dispose());
 		// Comprobar que se ha introducido contraseña.

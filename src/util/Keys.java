@@ -3,7 +3,9 @@ package util;
 import exceptions.HeaderError;
 import exceptions.PasswError;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
@@ -16,27 +18,45 @@ import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Clase para encapsular los conjuntos de claves públicas/privadas
+ * y guardarlas y leerlas de ficheros.
+ * Los ficheros de claves tendrán la extensión <i>.key</i>
+ * y se guardarán en la carpeta <i>keypairs/</i>
+ *
+ * @author Santiago Hernández
+ */
 public class Keys {
 	public static final int NOT_ENCRYPTED = 0;
 	public static final int ON_CACHE = 1;
 	public static final int NOT_AVAILABLE = 2;
-
-	private static final int DEFAULT_KEY_SIZE = 512;
 	public static final String PATH = "./keypairs/";
 	public static final String EXTENSION = ".key";
-
-
+	private static final int DEFAULT_KEY_SIZE = 512;
 	private PublicKey puk;
 	private PrivateKey prk;
 	private String name;
 	private String type;
 	private int size;
 	private byte[] prk_encrypted;
-	private Algoritmo encryp_type;
 	private boolean privateAvaliable;
 	private File file;
 
-	public Keys(String name, char[] password) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+	/**
+	 * Genera un nuevo par de claves pública y privada de tipo <i>RSA</i>
+	 * y las guarda en el fichero correspondiente.
+	 * Si se especifica {@code password} se encriptará la clave privada con dicha contraseña
+	 * con el primer algoritmo de <i>PBE</i> disponible.
+	 * Si {@code password} es {@code null} no se encripta la clave privada.
+	 *
+	 * @param name     Nombre del par de  claves a crear
+	 * @param password Contraseña para encriptar la clave privada
+	 *                 o {@code null} para no hacerlo
+	 * @throws GeneralSecurityException   Error al crear la clave
+	 * @throws FileAlreadyExistsException Ya existe un par de claves con el mismo nombre en el directorio de claves.
+	 * @throws IOException                Error en la entrada/salida
+	 */
+	public Keys(String name, char[] password) throws GeneralSecurityException, IOException {
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
 		kpg.initialize(DEFAULT_KEY_SIZE); // 512 bits
 		KeyPair kp = kpg.generateKeyPair();
@@ -50,12 +70,31 @@ public class Keys {
 		KeysStore.addKey(this);
 	}
 
+	/**
+	 * Carga un par de claves del fichero especificado.
+	 * Si la clave privada se encuentra cifrada, no podrá usarse
+	 * hasta descifrar la clave mediante @{@link Keys#decipherKey(char[])}.
+	 *
+	 * @param f Fichero con el par de claves
+	 * @throws IOException              Error en la entrada/salida
+	 * @throws NoSuchAlgorithmException El tipo de claves no está disponible.
+	 * @throws InvalidKeySpecException  Los parámetros de la clave en el fichero no son correctos.
+	 */
 	public Keys(File f) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 		loadKeys(f);
 		file = f;
 	}
 
-	public void saveKeys(char[] password) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+	/**
+	 * Guarda la clave en su fichero correspondiente con su nombre,
+	 * encriptando la clave privada si se indica una contraseña.
+	 *
+	 * @param password Contraseña para cifrar la clave privada.
+	 * @throws GeneralSecurityException   Error al crear la clave
+	 * @throws FileAlreadyExistsException Ya existe un par de claves con el mismo nombre en el directorio de claves.
+	 * @throws IOException                Error en la entrada/salida
+	 */
+	private void saveKeys(char[] password) throws IOException, GeneralSecurityException {
 		file = new File(PATH + name + EXTENSION);
 		if (file.exists())
 			throw new FileAlreadyExistsException(name + " exists");
@@ -93,12 +132,35 @@ public class Keys {
 		osw.close();
 	}
 
+	/**
+	 * Cifra la clave privada con la contraseña indicada mediante
+	 * el primer algoritmo de PBE disponible usando uso de @{@link Cipher_msg}.
+	 *
+	 * @param password Contraseña con la que cifrar la clave.
+	 * @return Clave privada cifrada como mensaje con cabecera.
+	 * @throws IOException                        Problema con la entrada y salida del mensaje
+	 * @throws NoSuchPaddingException             El algoritmo de relleno no está disponible
+	 * @throws NoSuchAlgorithmException           El algoritmo de cifrado no está disponible este cifrado en cuestión.
+	 * @throws InvalidKeySpecException            La contraseña no se acepta para el algoritmo en cuestión.
+	 * @throws InvalidAlgorithmParameterException Faltan parámetros en el algoritmo o son erróneos.
+	 * @throws InvalidKeyException                Especificaciones de la contraseña incorrecta.
+	 */
 	private byte[] cipherPrivateKey(char[] password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidAlgorithmParameterException, InvalidKeySpecException {
 		Cipher_msg cm = new Cipher_msg(Algoritmo.list_PBE_alg[0], password, new ByteArrayInputStream(prk.getEncoded()));
 		cm.cipher();
 		return cm.getText();
 	}
 
+	/**
+	 * Carga un par de claves del fichero especificado.
+	 * Si la clave privada se encuentra cifrada, no podrá usarse
+	 * hasta descifrar la clave mediante @{@link Keys#decipherKey(char[])}.
+	 *
+	 * @param f Fichero con el par de claves
+	 * @throws IOException              Error en la entrada/salida
+	 * @throws NoSuchAlgorithmException El tipo de claves no está disponible.
+	 * @throws InvalidKeySpecException  Los parámetros de la clave en el fichero no son correctos.
+	 */
 	private void loadKeys(File f) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 		String tmp;
 		String[] splt;
@@ -124,6 +186,7 @@ public class Keys {
 		m.find();
 		boolean encryp = Boolean.parseBoolean(m.group(1));
 		privateAvaliable = !encryp;
+		Algoritmo encryp_type;
 		if (encryp)
 			encryp_type = Algoritmo.get(splt[1].trim());
 
@@ -164,14 +227,31 @@ public class Keys {
 		br.close();
 	}
 
+	/**
+	 * Devuelve la clave pública del par de claves.
+	 *
+	 * @return Clave pública.
+	 */
 	public PublicKey getPuk() {
 		return puk;
 	}
 
+	/**
+	 * Devuelve la clave privada del par de claves.
+	 *
+	 * @return Clave privada o null si no se ha descifrado.
+	 */
 	public PrivateKey getPrk() {
 		return prk;
 	}
 
+	/**
+	 * Devuelve el estado en el que se encuentra la clave privada del par de claves.
+	 *
+	 * @return {@link Keys#NOT_AVAILABLE} Si la clave privada no se encuentra disponible al estar cifrada.
+	 * <p>{@link Keys#ON_CACHE} Si la clave privada se encuentra cifrada pero ha sido descifrada durante la ejecución.
+	 * <p>{@link Keys#NOT_ENCRYPTED} Si la clave privada no se encuentra cifrada y por tanto está disponible.
+	 */
 	public int privateAvailable() {
 		if (prk == null)
 			return NOT_AVAILABLE;
@@ -185,7 +265,21 @@ public class Keys {
 		return name;
 	}
 
-	public boolean decipherKey(char[] password) throws InvalidAlgorithmParameterException, HeaderError, PasswError, NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, BadPaddingException, InvalidKeyException {
+	/**
+	 * Descifra la clave privada con la contraseña indicada
+	 * haciendo uso de @{@link Cipher_msg#decipher()}
+	 * La clave privada será guardada en caché durante toda la ejecución del programa
+	 * o se elimine el objeto.
+	 *
+	 * @param password Contraseña para descifrar la clave
+	 * @return {@code true} si se ha logrado descifrar o {@code false} si no
+	 * @throws HeaderError                        Error al leer la cabecera de la clave encriptada
+	 * @throws PasswError                         La contraseña de la clave no se corresponde
+	 * @throws InvalidAlgorithmParameterException La clave no se encuentra encriptada o ya ha sido desencriptada
+	 * @throws IOException                        Error con la entrada/salida
+	 * @throws GeneralSecurityException           Error con el desencriptado.
+	 */
+	public boolean decipherKey(char[] password) throws GeneralSecurityException, HeaderError, PasswError, IOException {
 		if (prk != null || prk_encrypted == null)
 			throw new InvalidParameterException("Key not encrypted");
 
@@ -195,28 +289,25 @@ public class Keys {
 		return prk != null;
 	}
 
+	/**
+	 * Establece la clave privada según un byte array con el contenido de la clave.
+	 *
+	 * @param prk_sb Array de bytes con el contenido de la clave.
+	 * @throws NoSuchAlgorithmException Algoritmos de la clave no disponible.
+	 * @throws InvalidKeySpecException  Especificaciones de la clave no disponibles.
+	 */
 	private void setPRK(byte[] prk_sb) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		KeyFactory kf = KeyFactory.getInstance(type);
 		KeySpec kp = new PKCS8EncodedKeySpec(prk_sb);
 		prk = kf.generatePrivate(kp);
 	}
 
+	/**
+	 * Devuelve el fichero donde se encuentra guardado el par de claves.
+	 *
+	 * @return Fichero con el par de claves.
+	 */
 	public File getFile() {
 		return file;
-	}
-
-	public static void main(String[] args) throws Exception {
-
-//		new File(PATH + "example.key").delete();
-		Keys k = new Keys("key2", "password".toCharArray());
-//		k.saveKeys("passwordpassword".toCharArray());
-//		k.saveKeys(null);
-
-//		Keys l = new Keys(new File(PATH + "example.key"));
-
-//		System.out.println(k.puk);
-//		System.out.println(k.prk);
-//		System.out.println(l.puk);
-//		System.out.println(l.prk);
 	}
 }

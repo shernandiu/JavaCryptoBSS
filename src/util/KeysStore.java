@@ -2,27 +2,33 @@ package util;
 
 import gui.Logger;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
+/**
+ * Clase usada para almacenar el conjunto de claves y mantener el control de las claves generadas
+ *
+ * @author Santiago Hernández
+ */
 public class KeysStore {
-	public static List<Keys> listOfKeys = new ArrayList<>();
 	private static final Map<String, Keys> mapOfKeys = new HashMap<>();
 	private static final File keyDirectory = new File(Keys.PATH);
 	private static final Set<File> trackedFiles = new HashSet<>();
 	private static final Set<File> badFiles = new HashSet<>();
+	public static List<Keys> listOfKeys = new ArrayList<>();
 
 	static {
 		if (!keyDirectory.exists())
 			keyDirectory.mkdir();
 	}
 
+	/**
+	 * Escanea el directorio de claves buscando ficheros con claves no rastreadas y carga las claves nuevas.
+	 *
+	 * @throws FileAlreadyExistsException Si existe un fichero con el mismo nombre que el directorio de claves
+	 */
 	public static void update() throws FileAlreadyExistsException {
 		if (!keyDirectory.isDirectory())
 			throw new FileAlreadyExistsException("File with name of key folder");
@@ -47,15 +53,33 @@ public class KeysStore {
 		}
 	}
 
+	/**
+	 * Devuelve una lista con todos los pares de claves en el directorio de claves
+	 * actualizando automáticamente el conjunto mediante {@link #update()}
+	 *
+	 * @return Lista con los pares de claves disponibles
+	 * @throws FileAlreadyExistsException Si existe un fichero con el mismo nombre que el directorio de claves
+	 */
 	public static List<Keys> getListOfKeys() throws FileAlreadyExistsException {
 		update();
 		return listOfKeys;
 	}
 
+	/**
+	 * Devuelve el objeto de un par de claves en base a su nombre.
+	 *
+	 * @param name Nombre de la clave a obtener
+	 * @return Objeto con el par de claves o null si no existe.
+	 */
 	public static Keys get(String name) {
 		return mapOfKeys.get(name);
 	}
 
+	/**
+	 * Añade un nuevo par de claves al conjunto de claves rastreadas.
+	 *
+	 * @param k Par de claves a añadir
+	 */
 	public static void addKey(Keys k) {
 		listOfKeys.add(k);
 		trackedFiles.add(k.getFile());

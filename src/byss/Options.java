@@ -17,10 +17,10 @@ import java.util.Arrays;
  */
 public class Options {
 	/**
-	 * Constantes que representan las diferentes operaciones criptograficas aplicables a un objeto:
+	 * Constantes que representan las diferentes operaciones criptográficas aplicables a un objeto:
 	 * -Cifrado simétrico
 	 * -Hash/Mac
-	 * -Cifrado de clave publica
+	 * -Cifrado de clave pública
 	 * -Firma digital
 	 */
 	public final static byte OP_NONE = 0;
@@ -35,26 +35,26 @@ public class Options {
 	/**
 	 * Nombres de algoritmos de cifrado simétrico PBE
 	 */
-	public final static String PBEAlgorithms[] = Arrays.stream(Algoritmo.getListOfAlgorithms()).map(Algoritmo::getAlgorithm).toArray(String[]::new);
+	public final static String[] PBEAlgorithms = Arrays.stream(Algoritmo.getListOfAlgorithms()).map(Algoritmo::getAlgorithm).toArray(String[]::new);
 	/**
 	 * Nombres de algoritmos de cifrado simétrico, para generación de claves:
 	 */
-	public final static String KeyAlgorithms[] = {"AES", "ARCFOUR", "DESede"};
+	public final static String[] KeyAlgorithms = {"AES", "ARCFOUR", "DESede"};
 	/**
 	 * Nombres compuestos de algoritmos para cifrado simétrico, incluyendo Modo de operaciópn y Modo de Relleno:
 	 * Algoritmo/ModoOperacion/ModoRelleno
 	 */
-	public final static String SymmetrcialAlgorithms[] = {"AES/ECB/PKCS5PADDING", "AES/CBC/PKCS5PADDING", "ARCFOUR/ECB/NOPADDING", "DESede/CBC/PKCS5PADDING"};
+	public final static String[] SymmetrcialAlgorithms = {"AES/ECB/PKCS5PADDING", "AES/CBC/PKCS5PADDING", "ARCFOUR/ECB/NOPADDING", "DESede/CBC/PKCS5PADDING"};
 	/**
 	 * Rangos de tamaños de claves soportados para cada algoritmo
 	 */
-	public final static String algorithmSizeKey[] = {"AES", "128", "256",
+	public final static String[] algorithmSizeKey = {"AES", "128", "256",
 			"ARCFOUR", "40", "1024",
 			"DESede", "112", "168"};
 	/**
 	 * Nombres de algoritmos para cifrado simétrico de claves
 	 */
-	public final static String KeyWrapAlgorithms[] = {"PBEWithMD5AndDES"};
+	public final static String[] KeyWrapAlgorithms = {"PBEWithMD5AndDES"};
 
 	/**
 	 * Devuelve el rango del tamaño de las claves de un agoritmo dado, según la Tabla definida.
@@ -104,7 +104,7 @@ public class Options {
 	 * @param item       String a buscar
 	 * @return posicion de <code>item</code> en <code>stringList</code> si la encuentra, -1 en caso contrario
 	 */
-	public static int search(String stringList[], String item) {
+	public static int search(String[] stringList, String item) {
 		int i;
 		for (i = stringList.length - 1; i != -1; i--)
 			if (stringList[i].compareTo(item) == 0)

@@ -3,10 +3,11 @@ package gui;
 import exceptions.HeaderError;
 import exceptions.PasswError;
 import gui.util.SeparatorComboBox;
-import org.junit.platform.commons.function.Try;
 import util.*;
 
 import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -283,7 +284,7 @@ public class GUIMainWindow extends JFrame {
 			} catch (NoSuchAlgorithmException ex) {
 				Logger.add_error("Error: No se reconoce el algoritmo de cifrado.", ex);
 			} catch (GeneralSecurityException ex) {
-				Logger.add_error("Error al descifrar el fichero.", ex);
+				Logger.add_error("Error en el desencriptado.", ex);
 			}
 		}
 	}
@@ -310,8 +311,6 @@ public class GUIMainWindow extends JFrame {
 					Logger.add_text("Guardado fichero original en: " + s.getOutputFile());
 				}
 			}
-		} catch (FileNotFoundException ex) {
-			Logger.add_error("Error: Fichero no encontrado.", ex);
 		} catch (HeaderError ex) {
 			Logger.add_error("Error: No se puede leer la cabecera.", ex);
 		} catch (IOException ex) {
@@ -319,7 +318,7 @@ public class GUIMainWindow extends JFrame {
 		} catch (NoSuchAlgorithmException ex) {
 			Logger.add_error("Error: No se reconoce el algoritmo de cifrado.", ex);
 		} catch (GeneralSecurityException ex) {
-			Logger.add_error("Error al descifrar el fichero.", ex);
+			Logger.add_error("Error en el desencriptado.", ex);
 		}
 
 	}
@@ -384,7 +383,9 @@ public class GUIMainWindow extends JFrame {
 
 		algoritmo = (Algoritmo) comboBox1.getSelectedItem();
 		// bloquear el boton de cifrar mensaje si el algoritmo no es un PBE
-		cifrarMensajeButton.setEnabled(algoritmo.getType() == Algoritmo.PBE);
+		if (algoritmo != null) {
+			cifrarMensajeButton.setEnabled(algoritmo.getType() == Algoritmo.PBE);
+		}
 
 		// Añadir los listeners a los botones
 		abrirButton.addActionListener(open_file);

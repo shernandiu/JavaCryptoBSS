@@ -35,12 +35,14 @@ public class Algoritmo {
 				.filter(service -> "SecretKeyFactory".equals(service.getType()))
 				.map(Provider.Service::getAlgorithm).filter(e -> e.startsWith("PBE")).filter(e -> !e.contains("Hmac")).toArray(String[]::new);
 
+		// algoritmos PBE
 		list_PBE_alg = new Algoritmo[alg_str_list.length];
 		for (int i = 0; i < alg_str_list.length; i++) {
 			String str = alg_str_list[i];
 			list_PBE_alg[i] = new Algoritmo(str, str.replace("With", " con ").replace("And", " & ").replaceFirst("_(.*)", " $1 bits"), PBE);
 		}
 
+		// algoritmos clave pública
 		list_PKEY_alg = new Algoritmo[Options.publicAlgorithms.length];
 		for (int i = 0; i < list_PKEY_alg.length; i++) {
 			String str = Options.publicAlgorithms[i];
@@ -79,7 +81,7 @@ public class Algoritmo {
 	private final String common_name;
 	private final int type;
 
-	Algoritmo(String algorithm, String name, int type) {
+	private Algoritmo(String algorithm, String name, int type) {
 		this.algorithm = algorithm;
 		this.common_name = name;
 		this.type = type;

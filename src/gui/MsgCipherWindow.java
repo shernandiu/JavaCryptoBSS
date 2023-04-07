@@ -32,7 +32,7 @@ public class MsgCipherWindow extends JDialog {
 	private JProgressBar progressBar1;
 
 	private byte[] ciphed_text;
-	private Algoritmo alg = null;
+	private Algoritmo alg;
 
 	/**
 	 * Acción para redimensionar la ventana cada vez que las entradas de texto varían de tamaño.
@@ -96,6 +96,10 @@ public class MsgCipherWindow extends JDialog {
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
+
+		// OK en enter      Cerrar en esc
+		getRootPane().setDefaultButton(encriptarButton);
+		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 		// Agrupar botones radiales
 		ButtonGroup bg = new ButtonGroup();

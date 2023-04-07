@@ -38,7 +38,7 @@ public class BasicHeader {
 	/**
 	 * Datos almacenados en la cabcera. basicData.length() < length
 	 */
-	private byte basicData[];
+	private byte[] basicData;
 
 	/**
 	 * Constructor por defecto.
@@ -86,7 +86,7 @@ public class BasicHeader {
 		DataInputStream dis = new DataInputStream(is);
 		length = dis.readShort(); // Leer la longutud de los datos
 		if ((length > 0) && (length < MAXHEADERLENGTH)) {
-			byte buffer[] = new byte[length];
+			byte[] buffer = new byte[length];
 			if (is.read(buffer) == length) {
 				// Descifrar datos
 				byte[] decryptData = decrypt(buffer);
@@ -152,21 +152,20 @@ public class BasicHeader {
 				System.out.println("Leído, Longitud: " + fh2.getbasicData().length);
 				System.out.print("Leído, Data     : ");
 				for (byte i = 0; i < fh2.getbasicData().length; i++)
-					System.out.print(String.format("0x%h ", fh2.getbasicData()[i]));
+					System.out.printf("0x%h ", fh2.getbasicData()[i]);
 			} else
 				System.out.println("Error en la carga");
 			fis.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		;
 	}
 
 	/**
 	 * Programa principal para prueba
 	 */
-	public static void main(String args[]) {
-		byte basicData[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	public static void main(String[] args) {
+		byte[] basicData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 		BasicHeader bh = new BasicHeader(basicData);
 		bh.test();
 	}

@@ -7,6 +7,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Clase abstracta para englobar a los algoritmos tanto
+ * de cifrado como de firma que deben leer la cabecera de un fichero.
+ *
+ * @author Santiago Hernández
+ */
 public abstract class HeaderReader {
 	protected byte option;
 	protected Algoritmo cypher_type;

@@ -5,18 +5,13 @@ import exceptions.PasswError;
 import util.Keys;
 import util.KeysStore;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class KeyDecipWindow extends JDialog {
 	private JPasswordField passwordField1;

@@ -8,7 +8,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Vector;
@@ -67,22 +66,6 @@ public class KeysWindow extends JDialog {
 					accept();
 			}
 		});
-
-//		table1.getSelectionModel().addListSelectionListener(e -> {
-//			int selectedRow = table1.getSelectedRow();
-//			if (selectedRow < 0 || selectedRow > table1.getRowCount())
-//				return;
-//			selectedKey = KeysStore.get((String) dtm.getDataVector().get(selectedRow).get(0));
-//			if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE && privateNeeded) {
-//				new KeyDecipWindow(KeysWindow.this, selectedKey);
-//				if (selectedKey.privateAvailable() == Keys.NOT_AVAILABLE)
-//					selectedKey = null;   // delete if not available
-//				else
-////					updateTable();
-//					updateRow(selectedRow);
-//			}
-//			selectedk.setText(selectedKey == null ? "" : selectedKey.toString());
-//		});
 
 		OKButton.addActionListener(e -> accept());
 
