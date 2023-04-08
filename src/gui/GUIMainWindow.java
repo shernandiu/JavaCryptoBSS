@@ -6,8 +6,6 @@ import gui.util.SeparatorComboBox;
 import util.*;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -76,6 +74,9 @@ public class GUIMainWindow extends JFrame {
 		}
 	};
 
+	/**
+	 * Escribe las opciones del menú según el fichero elegido sea PBE, clave pública o firma.
+	 */
 	void checkFile() {
 		try {
 			switch (decipType = AlgType.getType(file)) {
@@ -146,6 +147,9 @@ public class GUIMainWindow extends JFrame {
 		descifrarButton.setEnabled(false);
 	};
 
+	/**
+	 * Realiza el cifrado mediante PBE mostrando los errores por el log
+	 */
 	private void cipherPBE() {
 		FileEncWindow ps = new FileEncWindow(this);
 
@@ -168,6 +172,9 @@ public class GUIMainWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * Realiza el cifrado mediante clave pública mostrando los errores por el log
+	 */
 	private void cipherPKEY() {
 		KeysWindow ps = new KeysWindow(this, false);
 
@@ -192,6 +199,9 @@ public class GUIMainWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * Realiza el la firma del fichero mostrando los errores por el log
+	 */
 	private void cipherSIGN() {
 		KeysWindow ps = new KeysWindow(this, true);
 
@@ -238,6 +248,9 @@ public class GUIMainWindow extends JFrame {
 		descifrarButton.setEnabled(false);
 	};
 
+	/**
+	 * Descifra mediante PBE
+	 */
 	private void decipPBE() {
 		FileDecripWindow ps = new FileDecripWindow(GUIMainWindow.this);
 
@@ -264,6 +277,9 @@ public class GUIMainWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * Descifra mediante la clave privada
+	 */
 	private void decipPKEY() {
 		KeysWindow kw = new KeysWindow(GUIMainWindow.this, true);
 		Keys key;
@@ -289,6 +305,11 @@ public class GUIMainWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * Valida la firma de un fichero
+	 * Si es correcta recupera el contenido original
+	 * Si no lo es pregunta si recuperarlo.
+	 */
 	private void decipSIGN() {
 		KeysWindow kw = new KeysWindow(GUIMainWindow.this, false);
 		Keys key;
@@ -299,13 +320,16 @@ public class GUIMainWindow extends JFrame {
 			Signer s = new Signer(file);
 			boolean signV = s.verify(key.getPuk());
 			Logger.add_text("Desencriptado con " + s.getSignAlg());
-			if (signV) {
+			if (signV) { // firma correcta
 				Logger.add_good("Fima correcta.");
 				s.getOriginalFile();
 				Logger.add_text("Guardado fichero original en: " + s.getOutputFile());
-			} else {
+			} else { // firma incorrecta
 				Logger.add_error("Fima incorrecta.");
-				int option = JOptionPane.showOptionDialog(this, "Firma incorrecta\n¿Obtener el fichero original de todas formas?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+				// mostrar ventana de pregunta para recuperar el fichero
+				int option = JOptionPane.showOptionDialog(this, "Firma incorrecta\n¿Obtener el fichero original de todas formas?", "¿Recuperar el fichero?",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
 				if (option == JOptionPane.YES_OPTION) {
 					s.getOriginalFile();
 					Logger.add_text("Guardado fichero original en: " + s.getOutputFile());
@@ -358,7 +382,7 @@ public class GUIMainWindow extends JFrame {
 	 * Constructor de la ventana
 	 */
 	public GUIMainWindow() {
-		ListCellRenderer<Algoritmo> lcr = new SeparatorComboBox<Algoritmo>();
+		ListCellRenderer<Algoritmo> lcr = new SeparatorComboBox<>();
 		setMinimumSize(new Dimension(600, -1));
 		setTitle("Cifrador");
 		setContentPane(panel1);

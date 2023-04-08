@@ -13,6 +13,11 @@ import java.nio.file.FileAlreadyExistsException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
+/**
+ * Ventana para crear pares de claves
+ *
+ * @author Santiago Hernández
+ */
 public class KeyCreationWindow extends JDialog {
 	private JTextField nombreTextField;
 	private JPanel mainPanel;
@@ -35,7 +40,7 @@ public class KeyCreationWindow extends JDialog {
 			JOptionPane.showMessageDialog(KeyCreationWindow.this, "No se ha introducido un nombre");
 			return;
 		}
-		if (encrypt) {
+		if (encrypt) {  // si se ha decidido encriptar la clave privada
 			if (passwordField1.getPassword().length == 0) {
 				JOptionPane.showMessageDialog(KeyCreationWindow.this, "No se ha introducido ninguna contraseña");
 				return;
@@ -60,11 +65,17 @@ public class KeyCreationWindow extends JDialog {
 
 	};
 
+	/**
+	 * Constructor de la ventana.
+	 *
+	 * @param owner Dueño del diálogo
+	 */
 	public KeyCreationWindow(Dialog owner) {
 		super(owner);
 		setLocationRelativeTo(owner);
 		setContentPane(mainPanel);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setTitle("Crear par de claves");
 		pack();
 
 		// Agrupar botones radiales
@@ -81,8 +92,8 @@ public class KeyCreationWindow extends JDialog {
 			}
 		});
 
-		sinEncriptarRadioButton.addActionListener(e -> setEnabledEncript(false));
-		encriptadaRadioButton.addActionListener(e -> setEnabledEncript(true));
+		sinEncriptarRadioButton.addActionListener(e -> setEnabledEncrypt(false));
+		encriptadaRadioButton.addActionListener(e -> setEnabledEncrypt(true));
 
 		cancelarButton.addActionListener(e -> dispose());
 		aceptarButton.addActionListener(aceptar);
@@ -92,7 +103,10 @@ public class KeyCreationWindow extends JDialog {
 		setVisible(true);
 	}
 
-	private void setEnabledEncript(boolean enabled) {
+	/**
+	 * Activar o desactivar las opciones según se cifre la clave privada o no
+	 */
+	private void setEnabledEncrypt(boolean enabled) {
 		passwordField1.setEnabled(enabled);
 		passwordField2.setEnabled(enabled);
 		progressBar1.setEnabled(enabled);
@@ -106,6 +120,11 @@ public class KeyCreationWindow extends JDialog {
 		new KeyCreationWindow(null);
 	}
 
+	/**
+	 * Devuelve las claves generadas.
+	 *
+	 * @return El par de claves creadas o {@code null} si no se ha creado ninguna.
+	 */
 	public Keys getGeneratedKeys() {
 		return generatedKeys;
 	}

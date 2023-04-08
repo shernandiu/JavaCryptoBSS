@@ -13,14 +13,18 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Ventana para descifrar na clave privada.
+ * Similar a {@link FileDecripWindow}
+ */
 public class KeyDecipWindow extends JDialog {
 	private JPasswordField passwordField1;
 	private JButton cancelarButton;
 	private JButton OKButton;
 	private JPanel mainPanel;
 
-	private char[] password;
-	private Keys keys;
+	//	private char[] password;
+	//	private Keys keys;
 
 	public KeyDecipWindow(Dialog owner, Keys k) {
 		super(owner);

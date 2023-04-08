@@ -12,15 +12,21 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Ventana para seleccionar el par de claves a usar para cifrar/descifrar,
+ * firmar/verificar o crear un nuevo par de claves.
+ *
+ * @author Santigo Hernández
+ */
 public class KeysWindow extends JDialog {
 	private JButton crearButton;
 	private JPanel mainPanel;
 	private JButton OKButton;
 	private JTable table1;
 	private JTextField selectedk;
-	DefaultTableModel dtm;
+	private DefaultTableModel dtm;        // contenido de la tabla.
 	private Keys selectedKey;
-	private Keys finalSelectedKey = null;
+	private Keys finalSelectedKey = null; // clave seleccionada si se presiona aceptar.
 
 	private void accept() {
 		if (selectedKey == null) {
@@ -31,6 +37,14 @@ public class KeysWindow extends JDialog {
 		dispose();
 	}
 
+	/**
+	 * Constructor de la ventana
+	 *
+	 * @param owner         Ventana padre
+	 * @param privateNeeded {@code true} si la clave privada es necesaria y por tanto se necesita descifrarla
+	 *                      en caso de que se encuentre cifrada.
+	 *                      <p>{@code false} si solo se requiere la clave pública y no es necesario descifrar las privadas.
+	 */
 	public KeysWindow(Frame owner, boolean privateNeeded) {
 		super(owner);
 		setLocationRelativeTo(owner);
@@ -78,6 +92,11 @@ public class KeysWindow extends JDialog {
 		new KeysWindow(null, true);
 	}
 
+	/**
+	 * Inicializa la tabla de claves con los valores de {@link KeysStore}
+	 *
+	 * @throws FileAlreadyExistsException Existe un fichero con el mismo nombre que {@link Keys#PATH}
+	 */
 	private void createUIComponents() throws FileAlreadyExistsException {
 		Vector<Vector<String>> keys = new Vector<>();
 		Vector<String> names = new Vector<>(List.of(new String[]{"Nombre de la clave", "Disponible"}));
@@ -101,6 +120,9 @@ public class KeysWindow extends JDialog {
 
 	}
 
+	/**
+	 * Actualiza la tabla con los nuevos valores de {@link KeysStore}
+	 */
 	private void updateTable() {
 		Vector<Vector<String>> keys = new Vector<>();
 		Vector<String> names = new Vector<>(List.of(new String[]{"Nombre de la clave", "Disponible"}));
@@ -123,6 +145,11 @@ public class KeysWindow extends JDialog {
 		}
 	}
 
+	/**
+	 * Actualiza el valor de una fila concreta.
+	 *
+	 * @param row Índice de la fila a modificar.
+	 */
 	private void updateRow(int row) {
 		Vector<String> vrow = dtm.getDataVector().get(row);
 		vrow.set(1, switch (selectedKey.privateAvailable()) {
@@ -133,6 +160,11 @@ public class KeysWindow extends JDialog {
 		});
 	}
 
+	/**
+	 * Devuelve la clave seleccionada
+	 *
+	 * @return {@link Keys} seleccionadas o {@code null} si se ha cerrado la ventana.
+	 */
 	public Keys getSelectedKey() {
 		return finalSelectedKey;
 	}
