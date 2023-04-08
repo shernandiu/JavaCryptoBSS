@@ -11,6 +11,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Subclase de {@link Cipher_msg} especializada en cifrar y descifrar ficheros en lugar de texto.
@@ -71,7 +73,7 @@ public class Cipher_File extends Cipher_msg {
 	 */
 	@Override
 	public void cipher() throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
+		generateOutputFile(true);
 		os = new FileOutputStream(output_file);
 
 		try {
@@ -99,7 +101,7 @@ public class Cipher_File extends Cipher_msg {
 	 */
 	@Override
 	public void decipher() throws InvalidAlgorithmParameterException, InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, PasswError, IllegalBlockSizeException, BadPaddingException {
-		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
+		generateOutputFile(false);
 		os = new FileOutputStream(output_file);
 		try {
 			super.decipher();
@@ -120,4 +122,23 @@ public class Cipher_File extends Cipher_msg {
 		return output_file;
 	}
 
+	/**
+	 * Genera el fichero de salida según se encripte o desencripte asegurándose
+	 * de que no es igual que el original
+	 *
+	 * @param encrypt true si se encripta.
+	 *                false si se desencripta
+	 */
+	protected void generateOutputFile(boolean encrypt) {
+		String path = file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + (encrypt ? ENCRYPTED_EXTENSION : DECRYPTED_EXTENSION));
+		if (path.equals(file.getAbsolutePath())) {
+			Matcher m = Pattern.compile(String.format(".*\\((\\d+)\\)\\.(%s|%s)$", ENCRYPTED_EXTENSION, DECRYPTED_EXTENSION)).matcher(path);
+			if (m.find())
+				path = path.replaceFirst(String.format("(\\d+)(?=\\)\\.(%s|%s)$)", ENCRYPTED_EXTENSION, DECRYPTED_EXTENSION), String.valueOf(Integer.parseInt(m.group(1)) + 1));
+			else
+				path = path.replaceFirst("\\.\\w+$", "").concat("(1)." + (encrypt ? ENCRYPTED_EXTENSION : DECRYPTED_EXTENSION));
+			
+		}
+		output_file = new File(path);
+	}
 }

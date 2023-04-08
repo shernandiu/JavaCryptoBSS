@@ -81,7 +81,7 @@ public class ASym_Cipher_File extends Cipher_File {
 	 */
 	@Override
 	public void cipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + ENCRYPTED_EXTENSION));
+		generateOutputFile(true);
 		os = new FileOutputStream(output_file);
 
 		try {
@@ -129,7 +129,7 @@ public class ASym_Cipher_File extends Cipher_File {
 	 */
 	@Override
 	public void decipher() throws InvalidKeyException, IOException, HeaderError, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
-		output_file = new File(file.getAbsolutePath().replaceFirst("\\.\\w+$", "").concat("." + DECRYPTED_EXTENSION));
+		generateOutputFile(false);
 		os = new FileOutputStream(output_file);
 		try {
 			read_header();
@@ -157,7 +157,7 @@ public class ASym_Cipher_File extends Cipher_File {
 			throw ex;
 		}
 	}
-	
+
 	@Override
 	protected void generate_cypher() throws NoSuchAlgorithmException, NoSuchPaddingException {
 		c = Cipher.getInstance(cypher_type.getAlgorithm());
